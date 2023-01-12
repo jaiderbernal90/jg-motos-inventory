@@ -29,3 +29,10 @@
     position: relative;
     z-index: 1;
 }
+
+::ng-deep{
+    app-logo{
+        position: relative;
+        z-index: 2;
+    }
+}
