@@ -46,7 +46,8 @@ const antdModule = [
         QuickViewComponent,
         SideNavComponent,
         SideNavDirective,
-        FooterComponent
+        FooterComponent,
+        LogoComponent
     ],
     imports: [
         RouterModule,

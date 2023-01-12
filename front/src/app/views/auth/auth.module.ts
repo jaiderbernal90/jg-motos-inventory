@@ -11,6 +11,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TemplateModule } from '../../shared/template/template.module';
 
 const antdModule= [
   NzFormModule,
@@ -29,6 +30,7 @@ const antdModule= [
     AuthRoutingModule,
     SharedModule,
     TranslateModule,
+    TemplateModule,
     ReactiveFormsModule,
     ...antdModule
   ]
