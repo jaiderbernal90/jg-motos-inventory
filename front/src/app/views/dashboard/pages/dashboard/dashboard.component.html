@@ -1,0 +1,102 @@
+<app-cards-info-reports></app-cards-info-reports>
+
+<!-- <div class="row">
+    <div class="col-lg-12">
+        <app-card-revenues></app-card-revenues>
+    </div>
+</div> -->
+<!-- <div class="row">
+    <div class="col-lg-8">
+        <nz-card>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>{{ 'dashboard.revenue' | translate }}</h5>
+                <div>
+                    <a nz-button nzType="default" nzSize="small">{{ 'notification.viewAll' | translate }}</a>
+                </div>
+            </div>
+            <div class="m-t-30">
+                <div class="d-md-flex">
+                    <div class="p-r-30 m-v-10 border right border-hide-md">
+                        <p class="m-b-0">{{ 'dashboard.netRevenue' | translate }}</p>
+                        <h3 class="m-b-0">
+                            <span>$58,323</span>
+                            <span class="text-success m-l-10 font-size-14">+6.71%</span>
+                        </h3>
+                    </div>
+                    <div class="p-h-30 m-v-10 border right border-hide-md">
+                        <p class="m-b-0">{{ 'dashboard.selling' | translate }}</p>
+                        <h3 class="m-b-0">
+                            <span>$17,523</span>
+                            <span class="text-danger m-l-10 font-size-14">+1.82%</span>
+                        </h3>
+                    </div>
+                    <div class="p-l-30 m-v-10">
+                        <p class="m-b-0">{{ 'dashboard.cost' | translate }}</p>
+                        <h3 class="m-b-0">
+                            <span>$8,217</span>
+                            <span class="text-success m-l-10 font-size-14">+11.2%</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="m-t-50" style="height: 290px"> -->
+                <!-- <canvas ngChartjs 
+                    #myCanvas 
+                    [datasets]="revenueChartData" 
+                    [labels]="revenueChartLabels"
+                    [options]="revenueChartOptions" 
+                    [colors]="revenueChartColors" 
+                    [legend]="false"
+                    [chartType]="revenueChartType">
+                </canvas> -->
+            <!-- </div>
+        </nz-card>
+    </div>
+</div> -->
+<div class="row">
+    <div class="col-md-7 col-lg-8 col-12">
+        <app-cards-top-products></app-cards-top-products>
+    </div>
+    <div class="col-lg-4 col-md-5 col-12">
+        <app-cards-top-clients></app-cards-top-clients>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-8 col-md-7 col-12">
+        <app-cards-recent-sales></app-cards-recent-sales>
+    </div>
+    <div class="col-lg-4 col-md-5 col-12">
+        <nz-card>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="m-b-0">Actividad</h5>
+                <div>
+                    <a nz-button nzType="default" nzSize="small">Ver toda</a>
+                </div>
+            </div>
+            <div class="m-t-30">
+                <perfect-scrollbar class="overflow-y-auto" style="height: 437px">
+                    <div class=" p-l-10 p-t-15">
+                        <nz-timeline>
+                            <nz-timeline-item *ngFor="let item of activityList" [nzDot]="dotTemplate">
+                                <div class="m-l-20">
+                                    <h5 class="m-b-5">{{item.name}}</h5>
+                                    <p class="m-b-0">
+                                        <span class="font-weight-semibold">{{item.action}} </span> 
+                                        <span class="m-l-5"> {{item.target}}</span>
+                                    </p>
+                                    <span class="text-muted font-size-13">
+                                        <i nz-icon nzType="clock-circle" theme="outline"></i>
+                                        <span class="m-l-5">{{item.date}}</span>
+                                    </span>
+                                </div>
+                                <ng-template #dotTemplate>
+                                    <nz-avatar nzSize="small" [style.background-color]="item.avatar" nzText="{{item.name | slice:0:1}}"></nz-avatar>
+                                </ng-template>
+                            </nz-timeline-item>
+                        </nz-timeline>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+        </nz-card>   
+    </div>
+</div>
