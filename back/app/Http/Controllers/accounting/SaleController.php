@@ -234,7 +234,7 @@ class SaleController extends Controller{
         ->where('sale_id', $id)
         ->get();
 
-        $local = Local::where('code', 02)->first();
+        $local = Local::where('code', 01)->first();
         
         return InvoiceHelper::download($sale, $detailSail, $local);
     }
