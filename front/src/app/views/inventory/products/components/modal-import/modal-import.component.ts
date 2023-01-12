@@ -15,6 +15,7 @@ export class ModalImportComponent implements OnInit {
   form:FormGroup;
   validExtensions: string[] = ['xls', 'xlsx'];
   file: File;
+  isSpinning:boolean = false;
 
   constructor(
     private notification: NotificationsService,
@@ -26,15 +27,21 @@ export class ModalImportComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      file:[null,[]],
-      files:[null,[]],
+      file:[null,[Validators.required]],
     });
   }
 
   public submit(): void {
-    this.filesService.loadProducts(this.file).subscribe(
+    this.isSpinning = true;
+    this.filesService.loadProducts(this.file).pipe(finalize( () => {
+        this.isSpinning = false;  
+        this._crudSvc.requestEvent.emit('');
+      }))
+    .subscribe(
       data => {
-        return this.notification.success('Importe Exitoso', 'Los productos fueron importados exitosamente','top');        
+        this.notification.success('Importe Exitoso', 'Los productos fueron importados exitosamente','top');       
+        this.form.reset(); 
+        return
       }, 
       error => {
           console.warn('ERROR => ', error);
@@ -51,7 +58,9 @@ export class ModalImportComponent implements OnInit {
     const fileExtension = name.split('.').pop();
 
     if (!this.validExtensions.includes(fileExtension)) {
-      return this.notification.warning('Extensión no válida', `Los formatos admitidos son ${this.validExtensions.join(', ')}`,'top');
+      this.notification.warning('Extensión no válida', `Los formatos admitidos son ${this.validExtensions.join(', ')}`,'top');
+      this.form.reset(); 
+      return
     }
   
     this.file = file
