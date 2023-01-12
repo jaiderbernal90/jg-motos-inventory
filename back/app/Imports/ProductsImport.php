@@ -5,8 +5,12 @@ namespace App\Imports;
 use App\Models\inventory\Product;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class ProductsImport implements ToModel, WithHeadingRow
+HeadingRowFormatter::default('none');
+
+class ProductsImport implements ToModel, WithHeadingRow, WithUpserts
 {
     /**
     * @param array $row
@@ -15,6 +19,19 @@ class ProductsImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
+        if (!isset($row['Nombre']) || !isset($row['Referencia']) || !isset($row['Stock']) || !isset($row['Costo']) || !isset($row['Precio'])){
+            return null;
+        }
+        if (!isset($row['Impuesto IVA'])){
+            $tax = 0;
+        }else{
+            $tax = $row['Impuesto IVA'];
+        }
+        if (!isset($row['Descuento'])){
+            $discount = 0;
+        }else{
+            $discount = $row['Descuento'];
+        }
         $name = $row['Nombre'];
         $description = $row['Descripción'];
         $applications = $row['Aplicación'];
@@ -25,9 +42,6 @@ class ProductsImport implements ToModel, WithHeadingRow
         $status = $row['Estado'];
         $cost = $row['Costo'];
         $price = $row['Precio'];
-        $tax = $row['Impuesto IVA'];
-        $discount = $row['Descuento'];
-       
         $price_total = $price - ($price * $discount / 100);
         $data = Product::latest('id')->first();
         if ($data){
@@ -63,5 +77,13 @@ class ProductsImport implements ToModel, WithHeadingRow
             'discount' => $discount,
             'price_total' => $price_total
         ]);
+    }
+    
+    /**
+     * @return string|array
+     */
+    public function uniqueBy()
+    {
+        return 'reference';
     }
 }

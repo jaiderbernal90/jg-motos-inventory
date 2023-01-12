@@ -29,8 +29,8 @@ const antdModule= [
     CommonModule,
     AuthRoutingModule,
     SharedModule,
-    TranslateModule,
     TemplateModule,
+    TranslateModule,
     ReactiveFormsModule,
     ...antdModule
   ]
