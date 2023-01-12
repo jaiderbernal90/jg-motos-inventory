@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithUpserts;
 
 HeadingRowFormatter::default('none');
 
-class ProductsImport implements ToModel, WithHeadingRow, WithUpserts
+class ProductsImport implements ToModel, WithHeadingRow
 {
     /**
     * @param array $row
@@ -70,6 +70,28 @@ class ProductsImport implements ToModel, WithHeadingRow, WithUpserts
         }else{
             $statusF = 'in-stock';
         }
+
+
+        $product = Product::where('reference', $row['Referencia'])->first();
+        if ($product) {
+            $product->update([
+                'name' => $name,
+                'description' => $description,
+                'applications' => $applications,
+                'stock' => $stock,
+                'status' => $statusF,
+                'original' => $originalF,
+                'stockMin' => $stockMin,
+                'cost' => $cost,
+                'price' => $price,
+                'tax' => $tax,
+                'discount' => $discount,
+                'price_total' => $price_total
+            ]);
+
+            return null;
+        }
+
         return new Product([
             'code' => $code,
             'name' => $name,
@@ -87,12 +109,5 @@ class ProductsImport implements ToModel, WithHeadingRow, WithUpserts
             'price_total' => $price_total
         ]);
     }
-    
-    /**
-     * @return string|array
-     */
-    public function uniqueBy()
-    {
-        return 'reference';
-    }
+
 }
