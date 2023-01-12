@@ -1,9 +1,0 @@
-<nz-tabset nzLinkRouter>
-    <ng-container *ngFor="let item of tabs">
-        <nz-tab>
-            <a *nzTabLink nz-tab-link [routerLink]="item.url">
-                {{ item.title | translate }}
-            </a>
-        </nz-tab>
-    </ng-container>
-</nz-tabset>
