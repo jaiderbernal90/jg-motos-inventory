@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Local;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class LocalsSeeder extends Seeder
 {
@@ -39,6 +40,8 @@ class LocalsSeeder extends Seeder
                 "logo" => "http://localhost:8000/storage/16710249106399d10ea93f8.jpg"
             ]
         ];
+
+        DB::table('locals')->truncate();
 
         foreach ($locals as $local){
             Local::create($local);
