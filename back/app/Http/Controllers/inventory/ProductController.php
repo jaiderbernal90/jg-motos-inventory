@@ -12,6 +12,7 @@ use App\Imports\ProductsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Milon\Barcode\DNS1D;
 use Milon\Barcode\DNS2D;
+use App\Models\accounting\SalesDetail;
 
 class ProductController extends Controller{
     /**
@@ -206,6 +207,11 @@ class ProductController extends Controller{
 
         if (!$data) {
             return ResponseHelper::NoExits('No existe un producto con el id ' .  $id);
+        }
+
+        $saleProduct = SalesDetail::where('product_id', $id)->first();
+        if ($saleProduct){
+            return ResponseHelper::NoExits('El producto no se puede eliminar porque ya esta registrado en una venta');
         }
 
         $audit = new AuditHelper;
