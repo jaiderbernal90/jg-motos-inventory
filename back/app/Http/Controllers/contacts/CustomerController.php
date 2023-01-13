@@ -5,6 +5,7 @@ use App\Exports\CustomersExport;
 use App\Helpers\AuditHelper;
 use Illuminate\Http\Request;
 use App\Models\contacts\Customer;
+use App\Models\accounting\Sale;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
@@ -130,6 +131,11 @@ class CustomerController extends Controller{
 
         if (!$data) {
             return ResponseHelper::NoExits('No existe un cliente con el id ' .  $id);
+        }
+
+        $saleCustomer = Sale::where('id_customer', $id)->first();
+        if ($saleCustomer){
+            return ResponseHelper::NoExits('El cliente no se puede eliminar porque ya existe una venta a su nombre');
         }
 
         $audit = new AuditHelper;
