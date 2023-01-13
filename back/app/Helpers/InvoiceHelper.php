@@ -19,7 +19,7 @@ class InvoiceHelper
         $data['cityLocal'] = $local->city;
         $data['directionLocal'] = $local->direction;
         $data['referenceSale'] = $sale->reference;
-        $data['date'] = $sale->created_at->format('d M Y h:m');
+        $data['date'] = $sale->created_at->format('Y-m-d H:i:s');
         $data['seller'] = Auth::user()->full_name;
         $data['detailSail'] = $detailSail;
         $data['subtotal'] = $sale->subtotal;
