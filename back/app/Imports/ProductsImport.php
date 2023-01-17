@@ -22,16 +22,9 @@ class ProductsImport implements ToModel, WithHeadingRow
         if (!isset($row['Nombre']) || !isset($row['Referencia']) || !isset($row['Stock']) || !isset($row['Costo']) || !isset($row['Precio'])){
             return null;
         }
-        if (!isset($row['Impuesto IVA'])){
-            $tax = 0;
-        }else{
-            $tax = $row['Impuesto IVA'];
-        }
-        if (!isset($row['Descuento'])){
-            $discount = 0;
-        }else{
-            $discount = $row['Descuento'];
-        }
+        $discount = @$row['Descuento'] ?? 0;
+        $tax = @$row['Impuesto IVA'] ?? 0;
+
         $name = $row['Nombre'];
         $description = $row['Descripción'];
         $applications = $row['Aplicación'];
@@ -44,16 +37,10 @@ class ProductsImport implements ToModel, WithHeadingRow
         $price = $row['Precio'];
         $price_total = $price - ($price * $discount / 100);
         $data = Product::latest('id')->first();
-        if ($data){
-            $code = $data->id + 1;
-        }else{
-            $code = 1;
-        }
-        if (in_array($original, ['no', 'No', 'NO', 'nO'])){
-            $originalF = 0;
-        }else{
-            $originalF = 1;
-        }
+        $code = ($data->id ?? 0) + 1; 
+
+        $originalF = (in_array($original, ['no', 'No', 'NO', 'nO'])) ? 0 : 1;
+
         if (in_array($status, ['SIN STOCK', 'Sin stock', 'sin stock', 'Sin Stock'])){
             $statusF = 'out-stock';
         }else if(in_array($status, ['BAJO STOCK', 'Bajo stock', 'bajo stock', 'Bajo Stock'])){
@@ -61,7 +48,6 @@ class ProductsImport implements ToModel, WithHeadingRow
         }else{
             $statusF = 'in-stock';
         }
-
 
         $product = Product::where('reference', $row['Referencia'])->first();
         if ($product) {
