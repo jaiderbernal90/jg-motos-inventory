@@ -4,9 +4,12 @@ namespace App\Models\accounting;
 use App\Models\contacts\Customer;
 use App\Models\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Sale extends Model{
+    use SoftDeletes;
+    
     protected $table = "sales";
 
     protected $fillable = ['reference','id_customer','id_payment_method','status','total_bails','subtotal','tax','total'];

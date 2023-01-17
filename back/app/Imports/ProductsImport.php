@@ -19,11 +19,21 @@ class ProductsImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        if (!isset($row['Nombre']) || !isset($row['Referencia']) || !isset($row['Stock']) || !isset($row['Costo']) || !isset($row['Precio'])){
+        if (!isset($row['Nombre']) || !isset($row['Referencia']) || !isset($row['Stock'])){
             return null;
         }
+
         $discount = @$row['Descuento'] ?? 0;
         $tax = @$row['Impuesto IVA'] ?? 0;
+        $cost = @$row['Costo'] ?? 0;
+
+        if (!isset($row['Precio'])){
+            $price = 0;
+            $price_total = 0;
+        }else{
+            $price = $row['Precio'];
+            $price_total = $price - ($price * $discount / 100);
+        }
 
         $name = $row['Nombre'];
         $description = $row['Descripción'];
@@ -33,9 +43,6 @@ class ProductsImport implements ToModel, WithHeadingRow
         $stockMin = $row['Stock minimo'];
         $original = $row['Original']; 
         $status = $row['Estado'];
-        $cost = $row['Costo'];
-        $price = $row['Precio'];
-        $price_total = $price - ($price * $discount / 100);
         $data = Product::latest('id')->first();
         $code = ($data->id ?? 0) + 1; 
 
