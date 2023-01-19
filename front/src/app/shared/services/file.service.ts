@@ -27,19 +27,6 @@ export class FilesService {
     return this.http.request(req);
   }
 
-  loadAffiliates(file: File): Observable<HttpEvent<any>> {
-    const formData: FormData = new FormData();
-
-    formData.append('file', file);
-
-    const req = new HttpRequest('POST', `${this.serverUrl}/affiliate/load`, formData, {
-      //reportProgress: true,
-      responseType: 'json'
-    });
-
-    return this.http.request(req);
-  }
-
   loadProducts(file: File): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
 

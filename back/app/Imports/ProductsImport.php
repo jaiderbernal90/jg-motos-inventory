@@ -12,6 +12,10 @@ HeadingRowFormatter::default('none');
 
 class ProductsImport implements ToModel, WithHeadingRow
 {
+
+    private $productsNoSaved = [];
+    private $rows = 0;
+
     /**
     * @param array $row
     *
@@ -58,23 +62,11 @@ class ProductsImport implements ToModel, WithHeadingRow
 
         $product = Product::where('reference', $row['Referencia'])->first();
         if ($product) {
-            $product->update([
-                'name' => $name,
-                'description' => $description,
-                'applications' => $applications,
-                'stock' => $stock,
-                'status' => $statusF,
-                'original' => $originalF,
-                'stockMin' => $stockMin,
-                'cost' => $cost,
-                'price' => $price,
-                'tax' => $tax,
-                'discount' => $discount,
-                'price_total' => $price_total
-            ]);
-
+            $this->productsNoSaved[] = $row;
             return null;
         }
+
+        ++$this->rows;
 
         return new Product([
             'code' => $code,
@@ -92,6 +84,16 @@ class ProductsImport implements ToModel, WithHeadingRow
             'discount' => $discount,
             'price_total' => $price_total
         ]);
+    }
+
+    public function getProductsNoSaved(): Object | Array
+    {
+        return $this->productsNoSaved;
+    }
+
+    public function getRowCount(): int
+    {
+        return $this->rows;
     }
 
 }

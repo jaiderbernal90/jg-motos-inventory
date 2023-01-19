@@ -25,6 +25,7 @@ import { FieldsCategoriesComponent } from './components/fields-categories/fields
 import { FiltersComponent } from './components/filters/filters.component';
 import { CURRENCY_MASK_CONFIG, CurrencyMaskConfig } from 'ng2-currency-mask';
 import { ModalImportComponent } from './components/modal-import/modal-import.component';
+import { ModalListProductsNoImportsComponent } from './components/modal-list-products-no-imports/modal-list-products-no-imports.component';
 registerLocaleData(es);
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
@@ -50,7 +51,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     EditProductComponent,
     FieldsCategoriesComponent,
     FiltersComponent,
-    ModalImportComponent
+    ModalImportComponent,
+    ModalListProductsNoImportsComponent
   ],
   imports: [
     CommonModule,

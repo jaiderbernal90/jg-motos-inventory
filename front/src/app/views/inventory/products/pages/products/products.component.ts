@@ -39,6 +39,9 @@ export class ProductsComponent implements OnInit {
         title: 'Marcas',
       },
       {
+        title: 'Aplicaciones',
+      },
+      {
         title: 'Precio',
       },
       {
@@ -145,7 +148,7 @@ export class ProductsComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Importar Datos',
       nzContent: ModalImportComponent,
-      nzClosable: false,
+      nzClosable: true,
       nzFooter: tplFooter
     });
   }
