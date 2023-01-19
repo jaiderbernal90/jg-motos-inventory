@@ -263,9 +263,25 @@ class ProductController extends Controller{
 
     public function importExcel(Request $request)
     {
-        $file = $request->file('file');
+
+        $this->validate($request,[
+            'myFile' => 'required',
+        ]);
+
+        $file = $request->file('myFile')->store('temp'); 
+        $path= storage_path('app').'/'.$file;  
+
         if ($file){
-            Excel::import(new ProductsImport, $file);
+            $helperImport = new ProductsImport;
+            Excel::import($helperImport, $path);
+
+            return ResponseHelper::Get([ 
+                'rowsSaved'=>$helperImport->getRowCount(), 
+                'productsNoSaved' => $helperImport->getProductsNoSaved()
+            ]);
         }
+
+        return ResponseHelper::NoExits('Archivo no valido' );
+
     }
 }

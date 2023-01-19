@@ -21,7 +21,7 @@ class DashboardController extends Controller
      */
     public function getSales()
     {
-        $data = Sale::where('status', 1)->sum('total');
+        $data = $this->getSale();
 
         return ResponseHelper::Get($data);
     }
@@ -51,9 +51,11 @@ class DashboardController extends Controller
     */
     public function getValueProducts()
     {
-        $data = Product::sum('price_total');
+        $products = Product::sum('price_total');
 
-        return ResponseHelper::Get($data);
+        $sales = $this->getSale();
+
+        return ResponseHelper::Get($products - $sales);
     }
 
     /**
@@ -136,4 +138,7 @@ class DashboardController extends Controller
         
         return ResponseHelper::Get($data);
     }
+
+
+    private function getSale():Int { return Sale::where('status', 1)->sum('total'); } 
 }

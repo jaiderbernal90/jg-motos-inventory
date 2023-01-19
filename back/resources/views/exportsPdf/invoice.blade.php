@@ -63,7 +63,7 @@
             </p>
             <p class="center">
                 <b>Referencia de venta # {{ @$data['referenceSale'] }}</b>
-                <br>{{ @$data['date'] }} a.m
+                <br>{{ @$data['date'] }}
             </p>
             <p class="left">
                 <b>Cajero: </b>{{ @$data['seller'] }}

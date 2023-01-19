@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NotificationsService } from '../../../../../shared/services/notifications.service';
-import { FilesService } from '../../../../../shared/services/file.service';
 import { CrudServices } from '../../../../../shared/services/crud.service';
 import { finalize } from 'rxjs/operators';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductsImportService } from '../../services/products-import.service';
+import { ModalListProductsNoImportsComponent } from '../modal-list-products-no-imports/modal-list-products-no-imports.component';
 
 @Component({
   selector: 'app-modal-import',
@@ -14,16 +15,18 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 export class ModalImportComponent implements OnInit {
   form:FormGroup;
   validExtensions: string[] = ['xls', 'xlsx'];
-  file: File;
+  file: any;
   isSpinning:boolean = false;
 
   constructor(
     private notification: NotificationsService,
     private formBuilder: FormBuilder,
-    private filesService: FilesService,
     private _crudSvc:CrudServices,
     private modalService: NzModalService,
-  ) { }
+    private _productSvc:ProductsImportService
+  ) { 
+    
+  }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -33,22 +36,37 @@ export class ModalImportComponent implements OnInit {
 
   public submit(): void {
     this.isSpinning = true;
-    this.filesService.loadProducts(this.file).pipe(finalize( () => {
+  
+    const body = new FormData();
+    body.append('myFile', this.file.fileRaw, this.file.fileName)
+
+    this._crudSvc.postDataRequest('/products/importExcel', body).pipe(finalize( () => {
         this.isSpinning = false;  
         this._crudSvc.requestEvent.emit('');
-      }))
-    .subscribe(
-      data => {
-        this.notification.success('Importe Exitoso', 'Los productos fueron importados exitosamente','top');       
-        this.form.reset(); 
-        return
-      }, 
-      error => {
-          console.warn('ERROR => ', error);
-          return this.notification.warning('Atención', 'Los productos no pudierón ser importados','top');  
-      }
-    );
+     })).subscribe( res => {
+        const { data } = res;
+        console.log(data);
+        
+        this._productSvc.setProduct$(data?.productsNoSaved);
+        this._productSvc.setRowImported$(data?.rowsSaved);
+        
+        this.openModalListsProducts();
+     }, error => {
+        console.warn('ERROR => ', error);
+        return this.notification.warning('Atención', 'Los productos no pudierón ser importados','top');
+     })
   }
+
+  private openModalListsProducts(): void {
+    this.modalService.closeAll();
+    this.modalService.create({
+      nzTitle: 'Resumen',
+      nzContent: ModalListProductsNoImportsComponent,
+      nzClosable: true,
+      nzWidth: '70%'
+    });
+  }
+
 
   uploadFile(event: any) {
     const [file] = event.target.files
@@ -63,6 +81,9 @@ export class ModalImportComponent implements OnInit {
       return
     }
   
-    this.file = file
+    this.file = {
+      fileRaw: file,
+      fileName: file.name
+    }
   }
 }

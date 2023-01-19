@@ -33,6 +33,12 @@ export class CrudServices {
     return this.http.post<string>(this.serverURL + path, info, this.httpOptions);
   }
 
+  // Solicitud POST
+  postDataRequest(path:string, body:FormData): Observable<any> {
+    return this.http.post<string>(this.serverURL + path, body);
+  }
+  
+
   // Solicitud PUT
   putRequest(path:string, info:any): Observable<string> {
     return this.http.put<string>(this.serverURL + path, info, this.httpOptions);
