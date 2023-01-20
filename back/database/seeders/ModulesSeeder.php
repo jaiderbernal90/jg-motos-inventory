@@ -51,6 +51,10 @@ class ModulesSeeder extends Seeder
             [
                 "id" => 9,
                 "name" => "Ventas"
+            ],
+            [
+                "id" => 10,
+                "name" => "Gastos"
             ]
         ];
 

@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\AuditExpense;
 use App\Models\audits\AuditBrand;
 use App\Models\audits\AuditCategory;
 use App\Models\audits\AuditColumn;
@@ -200,6 +201,20 @@ class AuditHelper
         try {
             AuditColumn::create([
                 'id_column' => $id,
+                'id_user' => $this->id,
+                'type' => $method,
+            ]);
+
+            return true;
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'La auditoria no pudo ser creada');
+        }
+    }
+
+    public function auditExpense(Int $id, Int $method){ 
+        try {
+            AuditExpense::create([
+                'id_expense' => $id,
                 'id_user' => $this->id,
                 'type' => $method,
             ]);

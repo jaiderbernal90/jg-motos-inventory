@@ -20,6 +20,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StatusSalePipe } from './pipes/status-sale.pipe';
 import { ExportButtonComponent } from './components/export-button/export-button.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { TitleFilterComponent } from './components/title-filter/title-filter.component';
+import { FilterDateComponent } from './components/filter-date/filter-date.component';
+import { ComponentsModule } from './components.module';
 
 const LIST_MODULES = [
     SearchPipe,
@@ -27,7 +30,9 @@ const LIST_MODULES = [
     ObjToArrayPipe,
     StatusProductPipe,
     ColorProductPipe,
-    StatusSalePipe
+    StatusSalePipe,
+    FilterDateComponent,
+    TitleFilterComponent
 ]
 
 @NgModule({
@@ -52,7 +57,9 @@ const LIST_MODULES = [
         NzTableModule,
         TranslateModule,
         NzTabsModule,
-        NzButtonModule
+        NzButtonModule,
+        FormsModule,
+        ComponentsModule
     ],
     declarations: [
         ...LIST_MODULES,
@@ -60,6 +67,8 @@ const LIST_MODULES = [
         CategoriesNavComponent,
         StatusSalePipe,
         ExportButtonComponent,
+        FilterDateComponent,
+        TitleFilterComponent
     ],
     providers: [
         ThemeConstantService

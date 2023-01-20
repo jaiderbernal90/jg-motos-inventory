@@ -21,6 +21,13 @@
                 <span>{{ 'sales.add' | translate }}</span>
             </a>
         </div>
+        <div class="col-12">
+            <nz-collapse nzGhost [nzBordered]="false">
+                <nz-collapse-panel [nzHeader]="titleFilter" [nzActive]="false" >
+                    <app-filter (getDate)="onChangeFilter($event)"></app-filter>
+                </nz-collapse-panel>
+              </nz-collapse>
+        </div>
     </div>
 
     <app-list-sales [salesList]="salesList" [orderColumn]="orderColumn" [loading]="loading"></app-list-sales>
@@ -35,4 +42,7 @@
 
 <ng-template #renderTemplate>
     <nz-spin *ngIf="isLoading"></nz-spin>
+</ng-template>
+<ng-template #titleFilter>
+   <app-title-filter></app-title-filter>
 </ng-template>

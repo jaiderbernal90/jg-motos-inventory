@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CrudServices } from '../../../../../shared/services/crud.service';
+import { ExpenseModel } from '../../../../../shared/interfaces/expense';
+import { BailModel } from 'src/app/shared/interfaces/bail';
+import { SalesModel } from '../../../../../shared/interfaces/sales';
+import { finalize } from 'rxjs/operators';
+import { getISOWeek } from 'date-fns';
+import { DateServicesService } from '../../../../../shared/services/date-services.service';
 
 @Component({
   selector: 'app-closing-dayling',
@@ -7,35 +13,39 @@ import { CrudServices } from '../../../../../shared/services/crud.service';
   styleUrls: ['./closing-dayling.component.scss']
 })
 export class ClosingDaylingComponent implements OnInit {
-  date:Date = new Date;
-  salesClosing:any;
-  bailsClosing:any;
-  
+  date:Date = new Date();
+  type:string = 'day';
+  salesClosing:SalesModel | any;
+  bailsClosing:BailModel | any;
+  expensesClosing:ExpenseModel | any;
+  isSpinning:boolean;
+
   constructor(
-    private _crudSvc:CrudServices 
-    ) { }
+    private _crudSvc:CrudServices,
+    private _dateSvc:DateServicesService 
+  ) { }
 
   ngOnInit(): void {
-    this.closingDayling();
+    this.closingDayling(this._dateSvc.getDate(this.date, this.type));
   }
 
-  private closingDayling():void {
-    let dateFull = this.date ? this.date : new Date();
-    let date = dateFull.getFullYear() + "-" + (dateFull.getMonth() + 1) + "-" + dateFull.getDate();
+  private closingDayling(date:Date | number | string):void {
+    this.isSpinning = true; 
     
-    let body = {
-      'date': date
-    };
-    
-    this._crudSvc.postRequest(`/reports/closingDayling/`, body)
-      .subscribe((res: any) => {
-        this.salesClosing = res['sales'];
-        this.bailsClosing = res['bails'];
-      })
+    this._crudSvc.postRequest(`/reports/closingDayling`, { date, type: this.type })
+    .pipe(finalize(() => this.isSpinning = false))
+    .subscribe((res: any) => {
+      const { data } = res;
+      this.salesClosing = data?.sales;
+      this.bailsClosing = data?.bails;
+      this.expensesClosing = data?.expenses;
+    })
   }
 
-  public changeDate(){
-    this.closingDayling();
+  public changeDate(event:any): void { 
+    const { date, type } = event;
+    this.type = type;
+    this.closingDayling(this._dateSvc.getDate(date, type)); 
   }
 
 }

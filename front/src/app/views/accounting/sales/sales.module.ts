@@ -23,6 +23,7 @@ import { ViewBailsComponent } from './pages/view-bails/view-bails.component';
 import { ListBailsComponent } from './components/list-bails/list-bails.component';
 import { AddBailsComponent } from './pages/add-bails/add-bails.component';
 import { FormBailsComponent } from './components/form-bails/form-bails.component';
+import { FilterComponent } from './components/filter/filter.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { FormBailsComponent } from './components/form-bails/form-bails.component
     ViewBailsComponent,
     ListBailsComponent,
     AddBailsComponent,
-    FormBailsComponent
+    FormBailsComponent,
+    FilterComponent
   ],
   imports: [
     CommonModule,

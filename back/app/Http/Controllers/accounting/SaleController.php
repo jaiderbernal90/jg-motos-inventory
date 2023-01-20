@@ -13,6 +13,7 @@ use App\Models\contacts\Customer;
 use App\Models\inventory\Product;
 use App\Models\Local;
 use App\Models\PaymentMethod;
+use Carbon\Carbon;
 use Throwable;
 
 class SaleController extends Controller{
@@ -24,23 +25,19 @@ class SaleController extends Controller{
     public function index(Request $request)
     {
         $data = [];
-        $page = $request->get('page') ? $request->get('page') : 1;
-        $limit = $request->get('limit') ? $request->get('limit') : 10;
-        $term = $request->get('term');
+        $page = $request->input('page') ? $request->input('page') : 1;
+        $limit = $request->input('limit') ? $request->input('limit') : 10;
+        $term = $request->input('term');
+        $type = $request->input('type');
+        $date = $request->input('date');
 
         Paginator::currentPageResolver(function () use ($page) {
             return $page;
         });
 
-        $data = Sale::select('sales.*')
-            ->with(['customer' => function ($query) { 
-                $query->select('id','full_name', 'id_type_document','document');
-                $query->with(['typeDocument:id,prefix']);
-            },'paymentMethod:id,name'])
-            ->where(function ($query) use ($term) {
-                $query->where('reference', 'like', "%$term%");
-                $query->orWhere('status', 'like', "%$term%");
-            })->orderBy('id', 'DESC')->paginate($limit);
+        $sale = $this->getSaleBypagination($term);
+        if($date && $type) $sale = $this->getSaleWithFilters($type, $date, $sale); 
+        $data = $sale->orderBy('id', 'DESC')->paginate($limit);
 
         return ResponseHelper::Get($data);
     }
@@ -352,5 +349,31 @@ class SaleController extends Controller{
         return $newStatus;
     }
     
+    private function getSaleBypagination($term) { 
+        return Sale::select('sales.*')
+        ->with(['customer' => function ($query) { 
+            $query->select('id','full_name', 'id_type_document','document');
+            $query->with(['typeDocument:id,prefix']);
+        },'paymentMethod:id,name'])
+        ->where(function ($query) use ($term) {
+            $query->where('reference', 'like', "%$term%");
+            $query->orWhere('status', 'like', "%$term%");
+        });
+    }
+
+    private function getSaleWithFilters(String $type, $date, $expense) {
+        if($type == 'month'){
+            $rangeDates = $this->getMonthAndYear($date);
+            return $expense->whereMonth('sales.created_at', $rangeDates['month'])->whereYear('sales.created_at', $rangeDates['year']);
+        }
+        return $expense->whereDate('sales.created_at', $date);
+    } 
+    
+    private function getMonthAndYear($date) {
+        $parseDate = Carbon::parse($date);
+        $arr['month'] = $parseDate->format('m');
+        $arr['year'] = $parseDate->format('Y');
+        return $arr;
+    }
     
 }

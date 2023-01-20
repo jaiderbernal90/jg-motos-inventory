@@ -10,13 +10,15 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ComponentsModule } from '../../../shared/components.module';
 import { DetailSalesComponent } from './components/detail-sales/detail-sales.component';
 import { DetailBailsComponent } from './components/detail-bails/detail-bails.component';
+import { DetailExpensesComponent } from './components/detail-expenses/detail-expenses.component';
 
 
 @NgModule({
   declarations: [
     ClosingDaylingComponent,
     DetailSalesComponent,
-    DetailBailsComponent
+    DetailBailsComponent,
+    DetailExpensesComponent
   ],
   imports: [
     CommonModule,

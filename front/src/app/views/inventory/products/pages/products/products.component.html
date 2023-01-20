@@ -1,16 +1,14 @@
 <nz-card>
     <div class="row m-b-30">
         <div class="col-md-12 col-xl-4">
-            <div class="d-flex flex-wrap">
-                <div class="m-b-10 m-r-10 w-xs-100 w-sm-50 ">
+                <div class="m-b-10 m-r-10 w-xs-100 w-sm-100 ">
                     <nz-input-group [nzPrefix]="prefixTemplate">
                         <input type="text" nz-input placeholder="Buscar Producto" [(ngModel)]="searchInput" (ngModelChange)="search()">
                     </nz-input-group>      
                     <ng-template #prefixTemplate>
                         <i nz-icon nzType="search" class="opacity-05"></i>
                     </ng-template>   
-                </div>
-            </div>          
+                </div>        
         </div>
         <div class="col-md-12 col-xl-8 text-right justify-content-end">
             <button nz-button nzType="default" nz-tooltip nzTooltipTitle="{{ 'products.import' | translate }}" class="btn-success" (click)="openModalImport(footer)">
@@ -42,10 +40,7 @@
 </nz-card>   
 
 <ng-template #titleFilter>
-    <div class="d-flex align-items-center justify-content-center">
-        Filtros
-        <span nz-icon nzType="filter" nzTheme="outline" class="ml-2"></span>
-    </div>
+    <app-title-filter></app-title-filter>
 </ng-template>
 
 <ng-template #footer>

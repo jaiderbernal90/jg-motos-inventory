@@ -11,6 +11,14 @@ const routes: Routes = [
     },
     loadChildren: () => import('../../views/accounting/sales/sales.module').then(m => m.SalesModule),
   },
+  {
+    path: 'gastos',
+    canActivate: [ NoAuthGuard ],
+    data: {
+        title: 'Gastos'
+    },
+    loadChildren: () => import('../../views/accounting/expenses/expenses.module').then(m => m.ExpensesModule),
+  },
 ];
 
 @NgModule({

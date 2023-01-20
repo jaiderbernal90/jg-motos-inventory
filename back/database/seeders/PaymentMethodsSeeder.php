@@ -15,7 +15,7 @@ class PaymentMethodsSeeder extends Seeder
      */
     public function run()
     {
-        $modules = [
+        $methods = [
             [
                 "id" => 1,
                 "name" => "Efectivo"
@@ -35,8 +35,8 @@ class PaymentMethodsSeeder extends Seeder
         ];
 
 
-        foreach ($modules as $module){
-            PaymentMethod::create($module);
+        foreach ($methods as $method){
+            PaymentMethod::create($method);
         }
     }
 }
