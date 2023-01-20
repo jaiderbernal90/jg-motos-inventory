@@ -111,7 +111,7 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroydestroy($id)
+    public function destroy($id)
     {
         $data = $this->getExpenseById($id);
 
