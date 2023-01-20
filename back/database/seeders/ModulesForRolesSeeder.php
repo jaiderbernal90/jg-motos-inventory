@@ -78,6 +78,13 @@ class ModulesForRolesSeeder extends Seeder
                 "role_id" => 1,
                 "has_admin" => 1,
                 "selected" => 1
+            ],
+            [
+                "id" => 10,
+                "module_id" => 10,
+                "role_id" => 1,
+                "has_admin" => 1,
+                "selected" => 1
             ]
         ];
 

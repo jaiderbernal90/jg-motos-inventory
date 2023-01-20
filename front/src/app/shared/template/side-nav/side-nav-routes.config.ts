@@ -67,6 +67,14 @@ export const ROUTES: SideNavInterface[] = [
         icon: 'bank',
         submenu: [
             {
+                path: '/contabilidad/gastos',
+                title: 'Gastos',
+                iconType: 'nzIcon',
+                icon: 'solution',
+                iconTheme: 'outline',
+                submenu: []
+            }, 
+            {
                 path: '/contabilidad/ventas',
                 title: 'Ventas',
                 iconType: 'nzIcon',

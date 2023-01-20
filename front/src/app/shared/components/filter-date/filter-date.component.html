@@ -1,0 +1,12 @@
+<nz-tabset>
+    <nz-tab nzTitle="{{ 'reports.date' | translate }}">
+        <div class="w-100">
+            <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChangeDate('day')" class="w-100"></nz-date-picker>
+        </div>
+    </nz-tab>
+    <nz-tab nzTitle="{{ 'reports.month' | translate }}">
+        <div class="w-100">                      
+            <nz-date-picker nzMode="month" [(ngModel)]="date" (ngModelChange)="onChangeDate('month')" class="w-100"></nz-date-picker>
+        </div>
+    </nz-tab>
+</nz-tabset>

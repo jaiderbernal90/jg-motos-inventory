@@ -199,6 +199,14 @@
         "addTitle":"Agregar categoría",
         "editTitle":"Editar categoría"
     },
+    "expenses":{
+        "title":"Gastos",
+        "add":"Agregar gasto",
+        "addTitle":"Agregar gasto",
+        "editTitle":"Editar gasto",
+        "description":"Descripción",
+        "value":"Valor"
+    },
     "subcategories":{
         "title":"Subcategorías",
         "add":"Agregar subcategoría",
@@ -210,7 +218,8 @@
         "addTitle":"Agregar abono"
     },
     "reports":{
-        "date":"Fecha"
+        "date":"Día",
+        "month":"Mes"
     },
     "closingDaylind":{
         "title":"Cierre diario",
@@ -223,6 +232,9 @@
         "nequi":"Nequi",
         "daviplata":"Daviplata",
         "numBails":"Número de abonos",
-        "bailsDay":"Monto abonado"
+        "bailsDay":"Monto abonado",
+        "expenses":"Gastos",
+        "numExpenses":"Número de gastos",
+        "total":"Total"
     }
 }

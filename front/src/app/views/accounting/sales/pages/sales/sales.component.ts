@@ -48,10 +48,12 @@ export class SalesComponent implements OnInit {
   term: string = '';
   totalItems:number;
   salesList:SalesModel[];
-  
+  date:Date = null;
+  type:string = '';
+
+
   constructor( 
     private _crudSvc:CrudServices,
-    private _statusSvc: StatusService,
   ){}
 
   ngOnInit(): void {
@@ -65,13 +67,16 @@ export class SalesComponent implements OnInit {
   private getSales():void {
     this.loading = true;
 
-    const query = [
-      `?page=${this.page}`,
-      `&term=${this.term}`,
-      `&limit=${this.limit}`,
-    ].join('');
+    const body = {  
+      page:  this.page,
+      term: this.term,
+      limit:this.limit,
+      date:this.date,
+      type:this.type,
+    };
+    
 
-    this._crudSvc.getRequest(`/sales/index${query}`).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
+    this._crudSvc.postRequest(`/sales/index`, body).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
         const { data } = res;
         this.salesList = data.data;
         this.totalItems = data.total;
@@ -95,6 +100,12 @@ export class SalesComponent implements OnInit {
       this.getSales();
   }
 
+  public onChangeFilter(event:any){
+    const { date, type } = event;
+    this.date = date; this.type = type;
+    this._crudSvc.requestEvent.emit('');
+  }
+
   private listenObserver = () => {
     const observer1$ = this._crudSvc.requestEvent.subscribe((res) => {
       this.getSales();
@@ -108,4 +119,3 @@ export class SalesComponent implements OnInit {
   }
   
 }
-

@@ -111,3 +111,10 @@
 
 @import 'demo/demo';
 @import 'colors/colors';
+
+
+:host ::ng-deep{
+    .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box{
+        padding: 0;
+    }
+}

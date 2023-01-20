@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\accounting\BailController;
+use App\Http\Controllers\accounting\ExpenseController;
 use App\Http\Controllers\accounting\SaleController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\inventory\BrandController;
@@ -136,7 +137,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::controller(SaleController::class)->prefix('sales')->group(function (){
-        Route::get('index', 'index');
+        Route::post('index', 'index');
         Route::post('create', 'create');
         Route::get('show/{id}', 'show');
         Route::post('update/{id}', 'update');
@@ -192,6 +193,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::delete('destroy/{id}', 'destroy');
             Route::get('getCount', 'getCount');
         });
+    });
+
+    Route::controller(ExpenseController::class)->prefix('expenses')->group(function (){
+        Route::post('index', 'index');
+        Route::post('create', 'create');
+        Route::get('show/{id}', 'show');
+        Route::post('update/{id}', 'update');
+        Route::delete('destroy/{id}', 'destroy');
     });
 
     Route::controller(ReportController::class)->prefix('reports')->group(function (){
