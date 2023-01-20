@@ -54,9 +54,9 @@ class ExpenseController extends Controller
             $audit = new AuditHelper;
             $audit->auditExpense($data->id, 1);
 
-            return ResponseHelper::CreateOrUpdate($data, 'Cargo creado correctamente');
+            return ResponseHelper::CreateOrUpdate($data, 'Gasto creado correctamente');
         } catch (\Throwable $th) {
-            return ResponseHelper::Error($th, 'El cargo no pudo ser creado');
+            return ResponseHelper::Error($th, 'El gasto no pudo ser creado');
         }
     }
 
@@ -71,7 +71,7 @@ class ExpenseController extends Controller
         $data = $this->getExpenseById($id);
 
         if (!$data) {
-            return ResponseHelper::NoExits('No existe un cargo con el id '.  $id);
+            return ResponseHelper::NoExits('No existe un gasto con el id '.  $id);
         }
         return ResponseHelper::Get($data);
     }
@@ -88,7 +88,7 @@ class ExpenseController extends Controller
         $data = $this->getExpenseById($id);
 
         if (!$data) {
-            return ResponseHelper::NoExits('No existe un  con el id ' .  $id);
+            return ResponseHelper::NoExits('No existe un gasto con el id ' .  $id);
         }
         try {
             $data->update([
@@ -116,7 +116,7 @@ class ExpenseController extends Controller
         $data = $this->getExpenseById($id);
 
         if (!$data) {
-            return ResponseHelper::NoExits('No existe un cargo con el id ' .  $id);
+            return ResponseHelper::NoExits('No existe un gasto con el id ' .  $id);
         }
 
         $audit = new AuditHelper;
@@ -124,7 +124,7 @@ class ExpenseController extends Controller
 
         $data->delete();
 
-        return ResponseHelper::Delete('Cargo eliminado correctamente');
+        return ResponseHelper::Delete('Gasto eliminado correctamente');
     }
 
 
