@@ -10,7 +10,7 @@
                     </ng-template>   
                 </div>        
         </div>
-        <div class="col-md-12 col-xl-8 text-right justify-content-end">
+        <div class="col-md-12 col-xl-8 text-right justify-content-end" *ngIf="!isModal">
             <button nz-button nzType="default" nz-tooltip nzTooltipTitle="{{ 'products.import' | translate }}" class="btn-success" (click)="openModalImport(footer)">
                 <i nz-icon nzType="import" theme="outline"></i>
             </button>
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <app-list-products [productsList]="productsList" [orderColumn]="orderColumn" [loading]="loading"></app-list-products>
+    <app-list-products [productsList]="productsList" [orderColumn]="orderColumn" [loading]="loading" [isModal]="isModal"></app-list-products>
     
     <div class="row">
         <div class="col-12 mt-4 d-flex justify-content-end">

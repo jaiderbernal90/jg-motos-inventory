@@ -39,6 +39,9 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
 };
 
 @NgModule({
+  exports:[
+    ProductsComponent
+  ],
   declarations: [
     ProductsComponent,
     AddProductsComponent,

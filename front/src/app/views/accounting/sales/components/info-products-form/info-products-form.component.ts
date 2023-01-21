@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormArray } from '@angular/forms';
 import { finalize, filter } from 'rxjs/operators';
 import { NotificationsService } from 'src/app/shared/services/notifications.service';
@@ -6,17 +6,20 @@ import { CrudServices } from '../../../../../shared/services/crud.service';
 import { ProductsDetailService } from '../../services/products-detail.service';
 import { ValidationsForm } from '../../validations/validations-form';
 import { ProductModel } from '../../../../../shared/interfaces/product';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ModalSearchProductsComponent } from '../modal-search-products/modal-search-products.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-info-products-form',
   templateUrl: './info-products-form.component.html',
   styleUrls: ['./info-products-form.component.scss']
 })
-export class InfoProductsFormComponent implements OnInit {
-  
+export class InfoProductsFormComponent implements OnInit, OnDestroy {
   @Input() form:UntypedFormGroup;
   @Input() products:UntypedFormArray;
   
+  listSubscribers: Subscription[] = [];
   formProduct:UntypedFormGroup;
   loading:boolean; 
   
@@ -24,7 +27,9 @@ export class InfoProductsFormComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private _crudSvc:CrudServices,
     private _notificationSvC:NotificationsService,
-    private _productDetailSvC:ProductsDetailService
+    private _productDetailSvC:ProductsDetailService,
+    private _modalSvC: NzModalService,
+
   ) { }
 
   ngOnInit(): void {
@@ -38,19 +43,22 @@ export class InfoProductsFormComponent implements OnInit {
     },
     {
       validator: ValidationsForm.match('stock', 'amount', 'no-same')
-    });
+    });    
+    
+    this.listenObserver();
   }
 
   public submit(): void {
 
-    if(!this.validateExists()) {
+    if(!this.validateExists() && !this.validateExistsForMultiple(this.formProduct.get('id').value)) {
       this.addProductsForm(this.formProduct.value)
       this._productDetailSvC.setChangePrice$(true)
       this.formProduct.reset()
       return
     }
+
+    this.showNotificationExists();
     
-    this._notificationSvC.info('Atención','Ya se ha agregado ese producto','top');
   }
 
   private addProductsForm(product: ProductModel):void {          
@@ -58,10 +66,10 @@ export class InfoProductsFormComponent implements OnInit {
         product_id: [product?.id],
         reference: [product?.reference],
         name: [product.name],
-        amount: [product?.amount],
+        amount: [product?.amount ?? 1],
         stock: [product?.stock],
         price:[product?.price],
-        subtotal:[product?.amount * product?.price],
+        subtotal:[(product?.amount ?? 1) * product?.price],
       },   
       {
         validator: ValidationsForm.match('stock', 'amount', 'no-same')
@@ -91,15 +99,50 @@ export class InfoProductsFormComponent implements OnInit {
     if(amount > stock) this._notificationSvC.info('Atención','No hay suficientes unidades disponibles','top');
   }
 
+  public onClikOpenModal():void {
+    this._modalSvC.create({
+      nzTitle: 'Buscar Productos',
+      nzContent: ModalSearchProductsComponent,
+      nzClosable: true,
+      nzWidth: '80%'
+    });
+    
+  }
+
+  public ngOnDestroy(): void {
+    this.listSubscribers.map(a => a.unsubscribe());
+  }
+ 
   //------------------------------------------------------------------------
   //------------------------AUXILIAR FUNCTIONS------------------------------
   //------------------------------------------------------------------------
+  private listenObserver = () => {
+    const observer1$ = this._productDetailSvC.productLists$.subscribe((res) => {
+      console.log(this.products);
+      
+      if(!this.validateExistsForMultiple(res.id)){
+        this.addProductsForm(res);
+        return 
+      }
+      this.showNotificationExists();
+    });
+
+    this.listSubscribers = [observer1$];
+  }
   
+  
+
   private resetFields() {
     this.formProduct.patchValue({ name:null,stock:null,amount:null, price:null })
   }
+  
 
   private validateExists = () => (this.products.value.filter(e => e.id == this.formProduct.get('id').value)).length;
+  private validateExistsForMultiple = (id:number) => (this.products.value.filter(e => e.product_id == id)).length;
+  private showNotificationExists = () => this._notificationSvC.info('Atención','Ya se ha agregado ese producto a la venta','top');
+  
+  
+
   
 }
 
