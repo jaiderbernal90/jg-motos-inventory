@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { CrudServices } from '../../../../../shared/services/crud.service';
 import { ProductModel } from '../../../../../shared/interfaces/product';
@@ -16,6 +16,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['./products.component.scss']
 })
 export class ProductsComponent implements OnInit {
+  
+  @Input() isModal:boolean; 
   
   listSubscribers: Subscription[] = [];
   loading: boolean = false;

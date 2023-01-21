@@ -26,13 +26,20 @@
             </td>
             <td> <nz-tag  [nzColor]="item.status | colorProduct" >{{ item.status | statusProduct }}</nz-tag></td>
             <td class="text-md-right">
-                <a class="m-r-5 btn-warning" nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.edit' | translate }}" [routerLink]="['/','inventario','productos', 'editar', item.id]" >
-                    <span nz-icon nzType="edit" nzTheme="outline"></span>
-                </a>
-                <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.delete' | translate }}" class="btn-delete" nz-popconfirm nzPopconfirmTitle="{{ 'global.deleteConfirm' | translate }}" [nzBeforeConfirm]="beforeConfirm"
-                (nzOnConfirm)="confirm(item.id)" (nzOnCancel)="cancel()">
-                    <i nz-icon nzType="delete" theme="outline"></i>
-                </button>
+                <ng-container *ngIf="!isModal; else addFormProduct">
+                    <a class="m-r-5 btn-warning" nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.edit' | translate }}" [routerLink]="['/','inventario','productos', 'editar', item.id]" >
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </a>
+                    <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.delete' | translate }}" class="btn-delete" nz-popconfirm nzPopconfirmTitle="{{ 'global.deleteConfirm' | translate }}" [nzBeforeConfirm]="beforeConfirm" (nzOnConfirm)="confirm(item.id)" (nzOnCancel)="cancel()">
+                        <i nz-icon nzType="delete" theme="outline"></i>
+                    </button>
+                </ng-container>
+                <ng-template #addFormProduct>
+                    <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.add' | translate }}" class="btn-add" nz-popconfirm nzPopconfirmTitle="{{ 'global.addConfirm' | translate }}" [nzBeforeConfirm]="beforeConfirm"
+                    (nzOnConfirm)="confirmAdd(item.id)" (nzOnCancel)="cancel()" nzPopconfirmPlacement="left">
+                        <i nz-icon nzType="plus" theme="outline"></i>
+                    </button>
+                </ng-template>
             </td>
         </tr>
     </tbody>

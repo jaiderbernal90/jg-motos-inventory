@@ -130,6 +130,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('show/{id}', 'show');
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
+        Route::get('consultAvailability/{id}', 'consultAvailability');
         Route::get('getCount', 'getCount');
         Route::get('getForReference/{reference}', 'getForReference');
         Route::get('exportExcel', 'exportExcel');

@@ -1,7 +1,13 @@
 <nz-card>
-    <div class="row">
-        <div class="col-12">
+    <div class="row mb-4">
+        <div class="col-12 col-sm-8">
             <h4>{{ 'sales.addProduct' | translate  }}</h4>
+        </div>
+        <div class="col-12 col-sm-4">
+            <button nz-button nzType="text" nzBlock class="w-100" type="button" (click)="onClikOpenModal()">
+                <i nz-icon nzType="search" theme="outline"></i>
+                {{ 'global.searchProduct' | translate }}
+            </button>
         </div>
     </div>
     <form nz-form [formGroup]="formProduct" [nzLayout]="'vertical'" (ngSubmit)="submit()">            

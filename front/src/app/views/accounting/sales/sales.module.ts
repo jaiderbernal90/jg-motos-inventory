@@ -24,6 +24,8 @@ import { ListBailsComponent } from './components/list-bails/list-bails.component
 import { AddBailsComponent } from './pages/add-bails/add-bails.component';
 import { FormBailsComponent } from './components/form-bails/form-bails.component';
 import { FilterComponent } from './components/filter/filter.component';
+import { ModalSearchProductsComponent } from './components/modal-search-products/modal-search-products.component';
+import { ProductsModule } from '../../inventory/products/products.module';
 
 
 @NgModule({
@@ -41,7 +43,8 @@ import { FilterComponent } from './components/filter/filter.component';
     ListBailsComponent,
     AddBailsComponent,
     FormBailsComponent,
-    FilterComponent
+    FilterComponent,
+    ModalSearchProductsComponent
   ],
   imports: [
     CommonModule,
@@ -52,6 +55,7 @@ import { FilterComponent } from './components/filter/filter.component';
     QuillModule.forRoot(), 
     TranslateModule,
     SharedModule,
+    ProductsModule
   ],
   providers: [
     ThemeConstantService,

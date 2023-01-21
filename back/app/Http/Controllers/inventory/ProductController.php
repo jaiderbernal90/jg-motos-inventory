@@ -142,6 +142,38 @@ class ProductController extends Controller{
         return ResponseHelper::Get($data);
     }
 
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function consultAvailability($id)
+    {
+        $data = Product::select('products.*','brands.name as brand', 'sections.name as section', 'rows.name as row', 'columns.name as column')
+        ->leftjoin('brands', 'products.id_brand', '=', 'brands.id')
+        ->leftjoin('sections', 'products.id_section', '=', 'sections.id')
+        ->leftjoin('rows', 'products.id_row', '=', 'rows.id')
+        ->leftjoin('columns', 'products.id_column', '=', 'columns.id')
+        ->with(['categories' => function ($query) { 
+            $query->select('categories.id as category_id','categories.name as name_category','sub_categories.name as name_subcategory','sub_categories.id as sub_category_id');
+            $query->leftjoin('sub_categories', 'sub_categories.id', '=', 'products_for_category.sub_category_id');
+        }])
+        ->withSum('sales_detail','amount')
+        ->find($id);
+
+        if (!$data) {
+            return ResponseHelper::NoExits('No existe un producto con el id '.  $id);
+        }
+
+        if(@$data->stock){
+            return ResponseHelper::Get($data);
+        }
+
+        return ResponseHelper::NoExits("El producto $data->reference no tiene unidades disponibles");
+    }
+    
     /**
      * Update the specified resource in storage.
      *

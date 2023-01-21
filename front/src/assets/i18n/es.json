@@ -51,7 +51,9 @@
         "edit":"Editar",
         "back":"Regresar",
         "delete":"Eliminar",
-        "deleteConfirm":"Esta seguro que desea eliminar este registro?"
+        "deleteConfirm":"Esta seguro que desea eliminar este registro?",
+        "searchProduct":"Búsqueda avanzada",
+        "addConfirm":"Esta seguro que desea agregar este producto a la venta?"
     },
     "errors":{
         "required": "Campo requerido"
