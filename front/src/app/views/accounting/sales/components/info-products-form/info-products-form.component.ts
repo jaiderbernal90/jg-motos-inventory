@@ -122,6 +122,7 @@ export class InfoProductsFormComponent implements OnInit, OnDestroy {
       
       if(!this.validateExistsForMultiple(res.id)){
         this.addProductsForm(res);
+        this._productDetailSvC.setChangePrice$(true);
         return 
       }
       this.showNotificationExists();
