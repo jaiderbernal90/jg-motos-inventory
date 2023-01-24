@@ -104,7 +104,7 @@ export class InfoProductsFormComponent implements OnInit, OnDestroy {
       nzTitle: 'Buscar Productos',
       nzContent: ModalSearchProductsComponent,
       nzClosable: true,
-      nzWidth: '80%'
+      nzWidth: '85%'
     });
     
   }
