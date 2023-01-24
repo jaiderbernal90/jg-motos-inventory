@@ -118,8 +118,6 @@ export class InfoProductsFormComponent implements OnInit, OnDestroy {
   //------------------------------------------------------------------------
   private listenObserver = () => {
     const observer1$ = this._productDetailSvC.productLists$.subscribe((res) => {
-      console.log(this.products);
-      
       if(!this.validateExistsForMultiple(res.id)){
         this.addProductsForm(res);
         this._productDetailSvC.setChangePrice$(true);
