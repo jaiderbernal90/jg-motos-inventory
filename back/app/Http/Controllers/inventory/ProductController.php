@@ -259,7 +259,7 @@ class ProductController extends Controller{
      */
     public function getCount()
     {
-        $data = Product::latest('id')->first();
+        $data = Product::withTrashed()->latest('id')->first();
 
         return ResponseHelper::Get($data);
     }

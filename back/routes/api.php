@@ -1,16 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\accounting\BailController;
+use App\Http\Controllers\accounting\BailOrderController;
 use App\Http\Controllers\accounting\ExpenseController;
 use App\Http\Controllers\accounting\SaleController;
+use App\Http\Controllers\accounting\OrderController;
 use App\Http\Controllers\auth\AuthController;
-use App\Http\Controllers\inventory\BrandController;
-use App\Http\Controllers\inventory\CategoryController;
 use App\Http\Controllers\contacts\ProviderController;
 use App\Http\Controllers\contacts\CustomerController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\inventory\BrandController;
+use App\Http\Controllers\inventory\CategoryController;
 use App\Http\Controllers\inventory\ColumnController;
-use App\Http\Controllers\inventory\LocalController;
 use App\Http\Controllers\inventory\ProductController;
 use App\Http\Controllers\inventory\RowController;
 use App\Http\Controllers\inventory\SectionController;
@@ -18,9 +21,6 @@ use App\Http\Controllers\inventory\SubcategoryController;
 use App\Http\Controllers\reports\ReportController;
 use App\Http\Controllers\setting\UserController;
 use App\Http\Controllers\setting\RoleController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -206,5 +206,22 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::controller(ReportController::class)->prefix('reports')->group(function (){
         Route::post('closingDayling', 'closingDayling');
+    });
+
+    Route::controller(OrderController::class)->prefix('orders')->group(function (){
+        Route::post('index', 'index');
+        Route::post('create', 'create');
+        Route::get('show/{id}', 'show');
+        Route::post('update/{id}', 'update');
+        Route::delete('destroy/{id}', 'destroy');
+        Route::get('getCount', 'getCount');
+    });
+
+    Route::controller(BailOrderController::class)->prefix('bails_order')->group(function (){
+        Route::post('index', 'index');
+        Route::post('create', 'create');
+        Route::get('show/{id}', 'show');
+        Route::post('update/{id}', 'update');
+        Route::delete('destroy/{id}', 'destroy');
     });
 });

@@ -130,7 +130,7 @@ class BrandController extends Controller{
      */
     public function getCount()
     {
-        $data = Brand::latest('id')->first();
+        $data = Brand::withTrashed()->latest('id')->first();
 
         return ResponseHelper::Get($data);
     }
