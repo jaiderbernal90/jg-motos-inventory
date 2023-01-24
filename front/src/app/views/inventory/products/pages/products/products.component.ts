@@ -74,6 +74,7 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.listenObserver();
     this.getProducts();
+    this.validateOrderColumnTable();
   }
 
   // ---------------------------------------------------------------------
@@ -141,6 +142,41 @@ export class ProductsComponent implements OnInit {
     this.listSubscribers.map(a => a.unsubscribe());
   }
 
+  private validateOrderColumnTable(){
+    if(this.isModal){
+      this.orderColumn = [
+        {
+            title: ''
+        },
+        {
+            title: 'ID',
+            compare: (a: ProductModel, b: ProductModel) => a.id - b.id,
+            priority: false
+        },
+        {
+            title: 'Referencia',
+        },
+        {
+            title: 'Nombre',
+        },
+        {
+          title: 'Marcas',
+        },
+        {
+          title: 'Aplicaciones',
+        },
+        {
+          title: 'Precio',
+        },
+        {
+          title: 'Stock'
+        },
+        {
+          title: 'Estado'
+        },
+      ]
+    }
+  }
    // ---------------------------------------------------------------------
   // ------------------------MODALS-----------------------
   // ---------------------------------------------------------------------
@@ -155,4 +191,3 @@ export class ProductsComponent implements OnInit {
     });
   }
 }
-

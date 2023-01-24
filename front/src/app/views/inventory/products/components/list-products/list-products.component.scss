@@ -4,3 +4,9 @@ nz-tag {
     font-size: 14px;
     font-weight: medium;
 }
+
+::ng-deep{
+    .ant-table-content{
+        overflow-x: auto;
+    }
+}
