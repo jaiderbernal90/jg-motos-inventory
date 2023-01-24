@@ -212,7 +212,7 @@ class SaleController extends Controller{
      */
     public function getCount()
     {
-        $data = Sale::latest('id')->first();
+        $data = Sale::withTrashed()->latest('id')->first();
 
         return ResponseHelper::Get($data);
     }

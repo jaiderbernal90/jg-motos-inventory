@@ -6,6 +6,7 @@ use App\Models\accounting\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
+use App\Models\accounting\BailOrder;
 
 class OrderController extends Controller{
     /**
@@ -26,7 +27,6 @@ class OrderController extends Controller{
 
         $data = Order::where(function ($query) use ($term) {
             $query->where('reference', 'like', "%$term%");
-            $query->where('statu_commodity', 'like', "%$term%");
             $query->orWhere('payment_status', 'like', "%$term%");
         })->orderBy('id', 'DESC')->paginate($limit);
 
@@ -41,18 +41,22 @@ class OrderController extends Controller{
      */
     public function create(Request $request)
     {
+        $status = @$request->payment_status;
         try {
             $data = Order::create([
                 'reference' => $request->input('reference'),
                 'id_provider' => $request->input('id_provider'),
-                'statu_commodity' => $request->input('statu_commodity'),
                 'payment_status' => $request->input('payment_status'),
                 'id_payment_method' => $request->input('id_payment_method'),
+                'due_date' => $request->input('due_date'),
                 'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('subtotal'),
                 'tax' => $request->input('tax'),
                 'total' => $request->input('total')
             ]);
+
+            if($status == 2) $this->createBail(@$request->all(), $data);
+
             return ResponseHelper::CreateOrUpdate($data, 'Orden creada correctamente');
         } catch (\Throwable $th) {
             return ResponseHelper::Error($th, 'La orden no pudo ser creada');
@@ -92,9 +96,9 @@ class OrderController extends Controller{
         try {
             $data->update([
                 'id_provider' => $request->input('id_provider'),
-                'statu_commodity' => $request->input('statu_commodity'),
                 'payment_status' => $request->input('payment_status'),
                 'id_payment_method' => $request->input('id_payment_method'),
+                'due_date' => $request->input('due_date'),
                 'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('subtotal'),
                 'tax' => $request->input('tax'),
@@ -123,5 +127,35 @@ class OrderController extends Controller{
         $data->delete();
 
         return ResponseHelper::Delete('Orden eliminada correctamente');
+    }
+
+    /**
+     * get id latest
+     */
+    public function getCount()
+    {
+        $data = Order::withTrashed()->latest('id')->first();
+
+        return ResponseHelper::Get($data);
+    }
+
+    private function createBail(Array $req,Order $order): Int {
+        $bailNew = BailOrder::create([
+            'id_order'=> $order->id,
+            'id_payment_method'=> @$req['id_payment_method'],
+            'price'=> @$req['bail'],
+        ]);
+
+        $this->updateBailsSale($order);
+        return $bailNew->id;
+    }
+
+    private function updateBailsSale($order) {
+        $bails = $this->getBailsTotalSale($order->id);
+        $order->update([ 'total_bails' => $bails ]);
+    }
+
+    private function getBailsTotalSale(Int $idOrder): string {
+        return BailOrder::where('id_order', $idOrder)->sum('price');
     }
 }
