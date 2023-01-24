@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\accounting;
 
+use App\Exports\SalesExport;
 use App\Helpers\InvoiceHelper;
 use Illuminate\Http\Request;
 use App\Models\accounting\Sale;
@@ -14,6 +15,7 @@ use App\Models\inventory\Product;
 use App\Models\Local;
 use App\Models\PaymentMethod;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
 class SaleController extends Controller{
@@ -376,4 +378,11 @@ class SaleController extends Controller{
         return $arr;
     }
     
+    /**
+     * Export resource data
+    */
+    public function exportExcel()
+    {
+        return Excel::download(new SalesExport, 'Listado-ventas.xlsx');
+    }
 }

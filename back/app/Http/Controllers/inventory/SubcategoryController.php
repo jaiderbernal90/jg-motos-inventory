@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\inventory;
 
+use App\Exports\SubcategoriesExport;
 use App\Helpers\AuditHelper;
 use Illuminate\Http\Request;
 use App\Models\inventory\Subcategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SubcategoryController extends Controller{
     /**
@@ -145,5 +147,13 @@ class SubcategoryController extends Controller{
         $data = Subcategory::latest('id')->first();
 
         return ResponseHelper::Get($data);
+    }
+
+    /**
+     * Export resource data
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new SubcategoriesExport, 'Listado-subcategorias.xlsx');
     }
 }

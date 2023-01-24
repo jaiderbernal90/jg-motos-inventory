@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\inventory;
 
+use App\Exports\LocalExport;
 use App\Helpers\AuditHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use App\Models\inventory\Row;
 use App\Models\inventory\Section;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SectionController extends Controller
 {
@@ -186,5 +188,13 @@ class SectionController extends Controller
         $data = Section::latest('id')->first();
 
         return ResponseHelper::Get($data);
+    }
+
+    /**
+     * Export resource data
+    */
+    public function exportExcel()
+    {
+        return Excel::download(new LocalExport, 'Listado-local.xlsx');
     }
 }

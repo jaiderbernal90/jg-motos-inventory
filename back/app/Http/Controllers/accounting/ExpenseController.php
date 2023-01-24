@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\accounting;
 
+use App\Exports\ExpensesExport;
 use App\Helpers\AuditHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
@@ -9,6 +10,7 @@ use App\Models\accounting\Expense;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends Controller
 {
@@ -150,5 +152,13 @@ class ExpenseController extends Controller
         $arr['month'] = $parseDate->format('m');
         $arr['year'] = $parseDate->format('Y');
         return $arr;
+    }
+
+    /**
+     * Export resource data
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new ExpensesExport, 'Listado-gastos.xlsx');
     }
 }

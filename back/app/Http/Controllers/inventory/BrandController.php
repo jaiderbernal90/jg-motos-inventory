@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\inventory;
 
+use App\Exports\BrandsExport;
 use Illuminate\Http\Request;
 use App\Models\inventory\Brand;
 use App\Http\Controllers\Controller;
@@ -8,6 +9,7 @@ use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
 use App\Helpers\AuditHelper;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BrandController extends Controller{
     /**
@@ -133,5 +135,13 @@ class BrandController extends Controller{
         $data = Brand::withTrashed()->latest('id')->first();
 
         return ResponseHelper::Get($data);
+    }
+
+     /**
+     * Export resource data
+    */
+    public function exportExcel()
+    {
+        return Excel::download(new BrandsExport, 'Listado-marcas.xlsx');
     }
 }

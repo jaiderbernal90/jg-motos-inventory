@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\inventory;
 
+use App\Exports\CategoriesExport;
 use App\Helpers\AuditHelper;
 use Illuminate\Http\Request;
 use App\Models\inventory\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoryController extends Controller{
     /**
@@ -131,5 +133,13 @@ class CategoryController extends Controller{
         $data = Category::latest('id')->first();
 
         return ResponseHelper::Get($data);
+    }
+
+    /**
+     * Export resource data
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new CategoriesExport, 'Listado-categorias.xlsx');
     }
 }
