@@ -66,7 +66,8 @@ class SaleController extends Controller{
                 'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('subtotal'),
                 'tax' => $request->input('tax'),
-                'total' => $request->input('total')
+                'total' => $request->input('total'),
+                'observations' => $request->input('observations'),
             ]);
 
             if($status == 2) $this->createBail(@$request->all(), $data);
@@ -128,7 +129,8 @@ class SaleController extends Controller{
                 'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('subtotal'),
                 'tax' => $request->input('tax'),
-                'total' => $request->input('total')
+                'total' => $request->input('total'),
+                'observations' => $request->input('observations')
             ]);
 
             $products = @$request->productsForm;

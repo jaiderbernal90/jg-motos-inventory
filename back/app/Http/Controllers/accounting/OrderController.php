@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
 use App\Models\accounting\BailOrder;
+use Carbon\Carbon;
 
 class OrderController extends Controller{
     /**
@@ -25,7 +26,10 @@ class OrderController extends Controller{
             return $page;
         });
 
-        $data = Order::where(function ($query) use ($term) {
+        $data = Order::with(['provider' => function ($query) { 
+            $query->select('id','full_name','nit');
+        },'paymentMethod:id,name'])
+        ->where(function ($query) use ($term) {
             $query->where('reference', 'like', "%$term%");
             $query->orWhere('payment_status', 'like', "%$term%");
         })->orderBy('id', 'DESC')->paginate($limit);
@@ -41,18 +45,22 @@ class OrderController extends Controller{
      */
     public function create(Request $request)
     {
+
+        $due_date = Carbon::parse($request['due_date'])->format('Y-m-d');
         $status = @$request->payment_status;
+
         try {
             $data = Order::create([
                 'reference' => $request->input('reference'),
                 'id_provider' => $request->input('id_provider'),
                 'payment_status' => $request->input('payment_status'),
                 'id_payment_method' => $request->input('id_payment_method'),
-                'due_date' => $request->input('due_date'),
+                'due_date' => $due_date,
                 'total_bails' => $request->input('total_bails'),
-                'subtotal' => $request->input('subtotal'),
+                'subtotal' => $request->input('total'),
                 'tax' => $request->input('tax'),
-                'total' => $request->input('total')
+                'total' => $request->input('total'),
+                'observations' => $request->input('observations'),
             ]);
 
             if($status == 2) $this->createBail(@$request->all(), $data);
@@ -71,7 +79,7 @@ class OrderController extends Controller{
      */
     public function show($id)
     {
-        $data = Order::find($id);
+        $data = Order::with('provider')->find($id);
 
         if (!$data) {
             return ResponseHelper::NoExits('No existe una orden con el id '.  $id);
@@ -100,9 +108,10 @@ class OrderController extends Controller{
                 'id_payment_method' => $request->input('id_payment_method'),
                 'due_date' => $request->input('due_date'),
                 'total_bails' => $request->input('total_bails'),
-                'subtotal' => $request->input('subtotal'),
+                'subtotal' => $request->input('total'),
                 'tax' => $request->input('tax'),
-                'total' => $request->input('total')
+                'total' => $request->input('total'),
+                'observations' => $request->input('observations'),
             ]);
 
             return  ResponseHelper::CreateOrUpdate($data, 'Información actualizada correctamente',);
@@ -146,16 +155,16 @@ class OrderController extends Controller{
             'price'=> @$req['bail'],
         ]);
 
-        $this->updateBailsSale($order);
+        $this->updateBailsOrder($order);
         return $bailNew->id;
     }
 
-    private function updateBailsSale($order) {
-        $bails = $this->getBailsTotalSale($order->id);
+    private function updateBailsOrder($order) {
+        $bails = $this->getBailsTotalOrder($order->id);
         $order->update([ 'total_bails' => $bails ]);
     }
 
-    private function getBailsTotalSale(Int $idOrder): string {
+    private function getBailsTotalOrder(Int $idOrder): string {
         return BailOrder::where('id_order', $idOrder)->sum('price');
     }
 }

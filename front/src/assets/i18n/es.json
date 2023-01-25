@@ -105,7 +105,8 @@
         "email":"Correo electrónico",
         "department":"Departamento",
         "city":"Ciudad",
-        "address":"Dirección"
+        "address":"Dirección",
+        "invoices":"Facturas"
     },
     "products":{
         "code":"Código",
@@ -151,6 +152,16 @@
         "addTitle":"Agregar marca",
         "editTitle":"Editar marca",
         "code":"Código"
+    },
+    "orders":{
+        "add":"Agregar factura",
+        "addTitle":"Agregar factura",
+        "editTitle":"Editar factura",
+        "reference":"Referencia",
+        "infoProvider":"Información proveedor",
+        "providersList":"Lista de proveedores",
+        "status":"Estado factura",
+        "dueDate":"Fecha de vencimiento"
     },
     "sales":{
         "add":"Agregar venta",

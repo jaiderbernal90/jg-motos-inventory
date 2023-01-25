@@ -14,6 +14,12 @@ export class ValidationsForm {
         };
     }
 
+    static matchValidationOrders( firstControlName, secondControlName, customError = 'mismatch') {
+        return (fg: UntypedFormGroup) => {
+            return fg.get('payment_status').value === 2 && fg.get(firstControlName).value > fg.get(secondControlName).value ? fg.get(firstControlName).setErrors({'no-same': true}) : null;
+        };
+    }
+
     static bailsValidation(firstControlName, customError = 'mismatch') {
         return (fg: UntypedFormGroup) => {
             return fg.get(firstControlName).value > (fg.get('total').value - fg.get('total_bails').value) ? fg.get(firstControlName).setErrors({'no-same': true}) : null;

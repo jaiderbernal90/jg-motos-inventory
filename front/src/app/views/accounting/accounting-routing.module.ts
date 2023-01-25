@@ -19,6 +19,14 @@ const routes: Routes = [
     },
     loadChildren: () => import('../../views/accounting/expenses/expenses.module').then(m => m.ExpensesModule),
   },
+  {
+    path: 'ordenes',
+    canActivate: [ NoAuthGuard ],
+    data: {
+        title: 'Facturas'
+    },
+    loadChildren: () => import('../../views/accounting/invoices/invoices.module').then(m => m.InvoicesModule),
+  },
 ];
 
 @NgModule({
