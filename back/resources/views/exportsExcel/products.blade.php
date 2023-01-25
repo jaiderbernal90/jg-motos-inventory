@@ -1,7 +1,7 @@
 <table>
     <thead>
         <tr>
-            <th width="250px"><b>Código</b></th>
+            <th width="100px"><b>Código</b></th>
             <th width="250px"><b>Nómbre</b></th>
             <th width="250px"><b>Descripción</b></th>
             <th width="250px"><b>Aplicación</b></th>

@@ -76,6 +76,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
         Route::get('getModules', 'getModules');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(CategoryController::class)->prefix('categories')->group(function (){
@@ -85,6 +86,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
         Route::get('getCount', 'getCount');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(SubcategoryController::class)->prefix('subcategories')->group(function (){
@@ -94,6 +96,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
         Route::get('getCount', 'getCount');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(BrandController::class)->prefix('brands')->group(function (){
@@ -102,6 +105,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('show/{id}', 'show');
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(ProviderController::class)->prefix('providers')->group(function (){
@@ -147,6 +151,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('getCount', 'getCount');
         Route::delete('destroyDetail/{id}', 'destroyDetail');
         Route::get('downloadInvoice/{id}', 'downloadInvoice');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(BailController::class)->prefix('bails')->group(function (){
@@ -176,6 +181,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('getRowsSelect', 'getRowsSelect');
             Route::post('getColumnsSelect', 'getColumnsSelect');
             Route::get('getCount', 'getCount');
+            Route::get('exportExcel', 'exportExcel');
 
         });
         Route::controller(RowController::class)->prefix('rows')->group(function (){
@@ -202,6 +208,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('show/{id}', 'show');
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
+        Route::get('exportExcel', 'exportExcel');
     });
 
     Route::controller(ReportController::class)->prefix('reports')->group(function (){

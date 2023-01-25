@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\setting;
 
+use App\Exports\RolesExport;
 use App\Helpers\AuditHelper;
 use Illuminate\Http\Request;
 use App\Models\setting\Role;
@@ -10,6 +11,7 @@ use App\helpers\ResponseHelper;
 use App\Models\Module;
 use App\Models\ModuleForRole;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RoleController extends Controller{
     /**
@@ -156,5 +158,13 @@ class RoleController extends Controller{
         $data = Module::all();
 
         return ResponseHelper::Get($data);
+    }
+
+    /**
+     * Export resource data
+    */
+    public function exportExcel()
+    {
+        return Excel::download(new RolesExport, 'Listado-roles.xlsx');
     }
 }
