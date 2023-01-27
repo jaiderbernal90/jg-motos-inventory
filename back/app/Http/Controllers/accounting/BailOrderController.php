@@ -29,13 +29,13 @@ class BailOrderController extends Controller
         });
 
         $data = BailOrder::select('bails_orders.*')
-            ->where('bails.id_order', $order)
+            ->where('id_order', $order)
             ->with(['order','paymentMethod:id,name'])
             ->where(function ($query) use ($term) {
                 $query->where('price', 'like', "%$term%");
             })->orderBy('id', 'DESC')->paginate($limit);
 
-        $total_bails = BailOrder::select('bails.*')->where('bails.id_order', $order)->sum('bails.price');
+        $total_bails = BailOrder::where('id_order', $order)->sum('price');
 
         return ResponseHelper::GetTwo($data,$total_bails);
     }
@@ -47,6 +47,10 @@ class BailOrderController extends Controller
      */
     public function create(Request $request)
     {
+        $validateAmount = $this->validateAmount($request->id_order, $request->price);
+        if ($validateAmount){
+            return ResponseHelper::NoExits('No puedes hacer un abono que supere al total de la factura');
+        }
         try {
             $data = BailOrder::create([
                 'id_order' => $request->input('id_order'),
@@ -60,6 +64,14 @@ class BailOrderController extends Controller
         } catch (\Throwable $th) {
             return ResponseHelper::Error($th, 'El abono no pudo ser creada');
         }
+    }
+
+    private function validateAmount($idOrder, $price){
+        $data = Order::where('id', $idOrder)->first();
+        if (($data->total_bails + $price) > $data->total){
+            return true;
+        }
+        return false;
     }
 
     private function updateBailsOrder($bail) {

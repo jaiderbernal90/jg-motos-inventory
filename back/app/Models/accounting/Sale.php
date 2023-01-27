@@ -12,7 +12,7 @@ class Sale extends Model{
     
     protected $table = "sales";
 
-    protected $fillable = ['reference','id_customer','id_payment_method','status','total_bails','subtotal','tax','total'];
+    protected $fillable = ['reference','id_customer','id_payment_method','status','total_bails','subtotal','tax','total','observations'];
 
     // public $timestamps = false;
 

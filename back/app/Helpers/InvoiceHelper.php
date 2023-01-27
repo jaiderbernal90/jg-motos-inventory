@@ -34,4 +34,36 @@ class InvoiceHelper
         
         return $pdf->download("Factura #$sale->reference.pdf");
     }
+
+    public static function downloadInvoices($order, $local)
+    {
+        $data['logoLocal'] = $local->logo;
+        $data['nameLocal'] = $local->name;
+        $data['nitLocal'] = $local->nit;
+        $data['cellphoneLocal'] = $local->cellphone;
+        $data['departmentLocal'] = $local->department;
+        $data['cityLocal'] = $local->city;
+        $data['directionLocal'] = $local->direction;
+        $data['nitProvider'] = $order->nitProvider;
+        $data['nameProvider'] = $order->nameProvider;
+        $data['cellphoneProvider'] = $order->cellphoneProvider;
+        $data['departmentProvider'] = $order->departmentProvider;
+        $data['cityProvider'] = $order->cityProvider;
+        $data['addressProvider'] = $order->addressProvider;
+        $data['referenceOrder'] = $order->reference;
+        $data['date'] = $order->created_at->format('Y-m-d H:i:s');
+        $data['observations'] = $order->observations;
+        $data['subtotal'] = $order->subtotal;
+        $data['tax'] = $order->tax;
+        $data['total'] = $order->total;
+        $data['paymentMethod'] = $order->paymentMethod;
+        $data['paymentStatus'] = $order->payment_status;
+
+        $pdf = PDF::loadView('exportsPdf.invoiceOrder', [
+            'data' => $data
+        ]);
+        $pdf->setPaper('b7', 'portrait');
+        
+        return $pdf->download("Factura #$order->reference.pdf");
+    }
 }

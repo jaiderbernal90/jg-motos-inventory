@@ -56,10 +56,8 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
       validator: ValidationsForm.matchValidation('bail', 'total', 'no-same')
     }); 
 
-    if(this.id) {
-      this.getSale()
-    }
-    this.getReference()
+    if(this.id) this.getSale();
+    if(!this.id) this.getReference();
   }
   
   public submit(): void {
