@@ -84,11 +84,15 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
   //-------------------------------GET DATA---------------------------------
   //------------------------------------------------------------------------
   public getSale(){
-    this._crudSvc.getRequest(`/sales/show/${this.id}`).subscribe((res: any) => {
+    this.loading = true;
+    this._crudSvc.getRequest(`/sales/show/${this.id}`)
+    .pipe(finalize( () => this.loading = false))
+    .subscribe((res: any) => {
         const { data } = res;
         this.form.patchValue(data);
         this.form.patchValue({ bail: 0});
         this.setFormData(data);
+        this.date = data?.created_at;
     })
   }
 
