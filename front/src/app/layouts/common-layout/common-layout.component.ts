@@ -63,7 +63,7 @@ export class CommonLayoutComponent  {
             }
         } else {
             label = 'Configuraciones';
-            path += '/panel-control';
+            // path += '/panel-control';
         }
 
         const nextUrl = path && path !== '/panel-control' ? `${url}${path}` : url;

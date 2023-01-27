@@ -126,7 +126,6 @@ class SaleController extends Controller{
                 'id_customer' => $customer,
                 'id_payment_method' => $request->input('id_payment_method'),
                 'status' => $request->input('status'),
-                'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('subtotal'),
                 'tax' => $request->input('tax'),
                 'total' => $request->input('total'),

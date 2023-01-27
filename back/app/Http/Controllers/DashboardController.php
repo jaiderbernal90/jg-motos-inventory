@@ -51,7 +51,7 @@ class DashboardController extends Controller
     */
     public function getValueProducts()
     {
-        $products = Product::sum('price_total');
+        $products = Product::sum('cost');
 
         $sales = $this->getSale();
 

@@ -37,10 +37,10 @@ export class FormBailsComponent implements OnInit {
         id_order: [ this.id , [ Validators.required] ],
     },
     {
-      // validator: ValidationsForm.bailsValidation('price', 'no-same')
-      
+      validator: ValidationsForm.bailsValidation('price', 'no-same')
     });
 
+    if(this.id) this.getOrder()
     this.getPaymentMethods();
   }
   
@@ -61,6 +61,15 @@ export class FormBailsComponent implements OnInit {
   //------------------------------------------------------------------------
   //-------------------------------GET DATA---------------------------------
   //------------------------------------------------------------------------
+  public getOrder(){
+    this._crudSvc.getRequest(`/orders/show/${this.id}`).subscribe((res: any) => {
+      console.log(res);
+      
+      const { data} = res;
+      this.form.patchValue(data);
+    })
+  }
+
   private getPaymentMethods():void {
     this._crudSvc.getRequest(`/sales/getPaymentMethods`).subscribe((res: any) => {
         const { data } = res;
