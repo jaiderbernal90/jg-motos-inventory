@@ -68,7 +68,8 @@
             <p class="left">
                 <b>Proveedor: </b>
                 <br>Nombre: {{ @$data['nameProvider'] }}
-                <br>Nit: {{ @$data['nitProvider'] }} Celular: {{ @$data['cellphoneProvider'] }}
+                <br>Nit: {{ @$data['nitProvider'] }} 
+                <br>Celular: {{ @$data['cellphoneProvider'] }}
                 <br>Dirección: {{ @$data['addressProvider'] }}, {{ @$data['cityProvider'] }} {{ @$data['departmentProvider'] }}
             </p>
             <table class="table">
