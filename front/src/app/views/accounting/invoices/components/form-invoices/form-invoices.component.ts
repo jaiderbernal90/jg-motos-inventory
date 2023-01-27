@@ -56,12 +56,9 @@ export class FormInvoicesComponent implements OnInit , AfterViewChecked {
   }
   
   public submit(): void {
-    console.log('form -> ', this.form);
-    
     this.loading = true;
 
     let path = this.id ? `/orders/update/${this.id}` : `/orders/create`;
-
 
     this._crudSvc.postRequest(path, this.form.value)
     .pipe(finalize( () => this.loading = false))
@@ -77,13 +74,15 @@ export class FormInvoicesComponent implements OnInit , AfterViewChecked {
   //-------------------------------GET DATA---------------------------------
   //------------------------------------------------------------------------
   public getOrder(){
-    this._crudSvc.getRequest(`/orders/show/${this.id}`).subscribe((res: any) => {
+    this.loading = true;
+
+    this._crudSvc.getRequest(`/orders/show/${this.id}`)
+    .pipe(finalize( () => this.loading = false))
+    .subscribe((res: any) => {
         const { data } = res;
         this.form.patchValue(data);
         this.form.patchValue({ bail: 0 });
-        console.log('data => ', data);
-        console.log('this.form => ', this.form);
-        
+        this.date = data?.created_at;
     })
   }
 
