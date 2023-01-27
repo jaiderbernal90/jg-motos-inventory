@@ -29,10 +29,10 @@
                 <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'sales.downloadInvoice' | translate }}" class="btn-success" (click)="downloadInvoice(item.id)">
                     <i nz-icon nzType="file-text" theme="outline"></i>
                 </button>
-                <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'sales.viewSail' | translate }}" class="btn-success" [routerLink]="['/','contabilidad','ventas', 'abonos', item.id]" *ngIf="item.status === 2 || item.total_bails">
+                <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'sales.viewSail' | translate }}" class="btn-success m-r-5 m-l-5" [routerLink]="['/','contabilidad','ventas', 'abonos', item.id]" *ngIf="item.status === 2 || item.total_bails">
                     <i nz-icon nzType="eye" theme="outline"></i>
                 </button>
-                <a class="m-r-5 m-l-5 btn-warning" nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.edit' | translate }}" [routerLink]="['/','contabilidad','ventas', 'editar', item.id]" >
+                <a class="m-r-5 btn-warning" nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.edit' | translate }}" [routerLink]="['/','contabilidad','ventas', 'editar', item.id]" >
                     <span nz-icon nzType="edit" nzTheme="outline"></span>
                 </a>
                 <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="{{ 'global.delete' | translate }}" class="btn-delete" nz-popconfirm nzPopconfirmTitle="{{ 'global.deleteConfirm' | translate }}" [nzBeforeConfirm]="beforeConfirm"

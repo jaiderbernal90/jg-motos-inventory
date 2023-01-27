@@ -26,6 +26,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
+    "caniuse-lite": "^1.0.30001449",
     "chart.js": "^2.9.4",
     "date-fns": "^2.16.1",
     "jquery": "^3.5.1",

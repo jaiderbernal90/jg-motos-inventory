@@ -109,7 +109,6 @@ class OrderController extends Controller{
                 'payment_status' => $request->input('payment_status'),
                 'id_payment_method' => $request->input('id_payment_method'),
                 'due_date' => $request->input('due_date'),
-                'total_bails' => $request->input('total_bails'),
                 'subtotal' => $request->input('total'),
                 'tax' => $request->input('tax'),
                 'total' => $request->input('total'),

@@ -12,12 +12,14 @@
                 </div>
             </div>          
         </div>
-        <div class="col-lg-4 text-right">
-            <a nz-button nzType="primary" [routerLink]="['/','contabilidad','ventas','abonos',this.id,'crear']">
-                <i nz-icon nzType="plus-circle" theme="outline"></i>
-                <span>{{ 'bails.add' | translate }}</span>
-            </a>
-        </div>
+        <ng-container *ngIf="(total - totalBails)">
+            <div class="col-lg-4 text-right">
+                <a nz-button nzType="primary" [routerLink]="['/','contabilidad','ventas','abonos',this.id,'crear']">
+                    <i nz-icon nzType="plus-circle" theme="outline"></i>
+                    <span>{{ 'bails.add' | translate }}</span>
+                </a>
+            </div>
+        </ng-container>
     </div>
 
     <div class="row">
