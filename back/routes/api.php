@@ -222,6 +222,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('update/{id}', 'update');
         Route::delete('destroy/{id}', 'destroy');
         Route::get('getCount', 'getCount');
+        Route::get('downloadInvoice/{id}', 'downloadInvoice');
     });
 
     Route::controller(BailOrderController::class)->prefix('bails_order')->group(function (){

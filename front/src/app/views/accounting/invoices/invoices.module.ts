@@ -20,6 +20,10 @@ import { DetailPaymentComponent } from './components/detail-payment/detail-payme
 import { ObservationsOrderComponent } from './components/observations-order/observations-order.component';
 import { InfoProvidersOrderComponent } from './components/info-providers-order/info-providers-order.component';
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask';
+import { AddBailsComponent } from './pages/add-bails/add-bails.component';
+import { ViewBailsComponent } from './pages/view-bails/view-bails.component';
+import { FormBailsComponent } from './components/form-bails/form-bails.component';
+import { ListBailsComponent } from './components/list-bails/list-bails.component';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "rigth",
@@ -41,6 +45,10 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     DetailPaymentComponent,
     ObservationsOrderComponent,
     InfoProvidersOrderComponent,
+    AddBailsComponent,
+    ViewBailsComponent,
+    FormBailsComponent,
+    ListBailsComponent,
   ],
   imports: [
     CommonModule,

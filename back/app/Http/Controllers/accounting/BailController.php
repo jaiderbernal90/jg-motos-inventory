@@ -47,6 +47,10 @@ class BailController extends Controller
      */
     public function create(Request $request)
     {
+        $validateAmount = $this->validateAmount($request->id_sale, $request->price);
+        if ($validateAmount){
+            return ResponseHelper::NoExits('No puedes hacer un abono que supere al total de la venta');
+        }
         try {
             $data = Bail::create([
                 'id_sale' => $request->input('id_sale'),
@@ -62,6 +66,14 @@ class BailController extends Controller
         }
     }
 
+    private function validateAmount($idSale, $price){
+        $data = Sale::where('id', $idSale)->first();
+        if (($data->total_bails + $price) > $data->total){
+            return true;
+        }
+        return false;
+    }
+
     private function updateBailsSale($bail) {
         $bails = $this->getBailsTotalSale($bail->id_sale);
         $sale = Sale::find($bail->id_sale);
@@ -71,61 +83,5 @@ class BailController extends Controller
 
     private function getBailsTotalSale(Int $idSale): string {
         return Bail::where('id_sale', $idSale)->sum('price');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

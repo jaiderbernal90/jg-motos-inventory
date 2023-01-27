@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\accounting;
 
+use App\Helpers\InvoiceHelper;
 use Illuminate\Http\Request;
 use App\Models\accounting\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
 use App\helpers\ResponseHelper;
 use App\Models\accounting\BailOrder;
+use App\Models\Local;
 use Carbon\Carbon;
 
 class OrderController extends Controller{
@@ -166,5 +168,21 @@ class OrderController extends Controller{
 
     private function getBailsTotalOrder(Int $idOrder): string {
         return BailOrder::where('id_order', $idOrder)->sum('price');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function downloadInvoice($id)
+    {
+        $order = Order::select('orders.*', 'payment_methods.name as paymentMethod', 'providers.nit as nitProvider', 'providers.full_name as nameProvider', 'providers.cellphone as cellphoneProvider', 'providers.department as departmentProvider', 'providers.city as cityProvider', 'providers.address as addressProvider')
+        ->leftjoin('payment_methods', 'orders.id_payment_method', '=', 'payment_methods.id')
+        ->leftjoin('providers', 'orders.id_provider', '=', 'providers.id')
+        ->where('orders.id', $id)
+        ->first();
+
+        $local = Local::where('code', 01)->first();
+        
+        return InvoiceHelper::downloadInvoices($order, $local);
     }
 }

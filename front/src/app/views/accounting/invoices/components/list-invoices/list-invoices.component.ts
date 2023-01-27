@@ -22,6 +22,7 @@ export class ListInvoicesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
   }
 
   cancel(): void {
@@ -37,7 +38,7 @@ export class ListInvoicesComponent implements OnInit {
   }
 
   downloadInvoice(id:number): void {
-    this.fileService.exportFile(`/orders/downloadInvoice/${id}`, 'Factura');
+    this.fileService.exportFile(`/orders/downloadInvoice/${id}`, 'Factura de compra');
   }
 
   beforeConfirm(): Promise<boolean> {

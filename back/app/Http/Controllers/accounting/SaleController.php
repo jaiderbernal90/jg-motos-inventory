@@ -228,6 +228,7 @@ class SaleController extends Controller{
     {
         $sale = Sale::select('sales.reference', 'sales.subtotal', 'sales.tax', 'sales.total', 'payment_methods.name as paymentMethod', 'sales.created_at')
         ->leftjoin('payment_methods', 'sales.id_payment_method', '=', 'payment_methods.id')
+        ->where('sales.id', $id)
         ->first();
 
         $detailSail = SalesDetail::select('products.name', 'sales_detail.amount','sales_detail.price')

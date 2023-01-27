@@ -1,85 +1,83 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CrudServices } from '../../../../../shared/services/crud.service';
-import { InvoicesModel } from '../../../../../shared/interfaces/invoices';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { BailModel } from '../../../../../shared/interfaces/bail';
+import { CrudServices } from '../../../../../shared/services/crud.service';
+import { StatusService } from '../../../sales/services/status.service';
+import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-invoices',
-  templateUrl: './invoices.component.html',
-  styleUrls: ['./invoices.component.scss']
+  selector: 'app-view-bails',
+  templateUrl: './view-bails.component.html',
+  styleUrls: ['./view-bails.component.scss']
 })
-export class InvoicesComponent implements OnInit, OnDestroy {
+export class ViewBailsComponent implements OnInit {
 
   listSubscribers: Subscription[] = [];
+  id:number;
   loading: boolean = false;
   limit: number = 10;
   orderColumn = [
       {
           title: 'ID',
-          compare: (a: InvoicesModel, b: InvoicesModel) => a.id - b.id,
+          compare: (a: BailModel, b: BailModel) => a.id - b.id,
           priority: false
       },
       {
-          title: 'Referencia',
+          title: 'Cantidad abonada',
       },
       {
-          title: 'Proveedor',
-      },
-      {
-          title: 'Metodo pago',
+          title: 'Metodo de pago',
       },
       {
         title: 'Fecha',
-      },
-      {
-        title: 'Valor',
-      },
-      {
-        title: 'Estado'
-      },
-      {
-          title: ''
       }
   ]
   page: number = 1;
   searchInput: any;
   term: string = '';
   totalItems:number;
-  invoicesList:InvoicesModel[];
-  date:Date = null;
-  type:string = '';
-
+  bailsList:BailModel[];
+  totalBails:number;
+  total:number;
+  reference:string;
 
   constructor( 
     private _crudSvc:CrudServices,
-  ){}
+    private _statusSvc: StatusService,    
+    private activatedRoute: ActivatedRoute,
+  ){
+    this.activatedRoute.params.subscribe((params) => {
+      this.id = params.id ?? '';
+    });
+  }
 
   ngOnInit(): void {
     this.listenObserver();
-    this.getSales();
+    this.getBails();
   }
 
   // ---------------------------------------------------------------------
   // ----------------------------GET DATA---------------------------------
   // ---------------------------------------------------------------------
-  private getSales():void {
+  private getBails():void {
     this.loading = true;
 
-    const body = {  
-      page:  this.page,
+    const body = {
+      page: this.page,
       term: this.term,
-      limit:this.limit,
-      date:this.date,
-      type:this.type,
-    };
-    
+      limit: this.limit,
+      order: this.id,
+    }
 
-    this._crudSvc.postRequest(`/orders/index`, body).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
-        const { data } = res;
-        console.log(data);
+    this._crudSvc.postRequest(`/bails_order/index`, body).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
+        const { data, dataTwo } = res;
+        console.log(res);
         
-        this.invoicesList = data.data;
+        this.totalBails = dataTwo;
+        this.total =  data.data[0]?.order.total;
+        this.reference =  data.data[0]?.order.reference;
+        this.bailsList = data.data;
         this.totalItems = data.total;
       })
   }
@@ -88,28 +86,22 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   // ---------------------------------------------------------------------
   public search(): void {
       this.term = this.searchInput;
-      this.getSales()
+      this.getBails()
   }
 
   public pageIndexChanged(page:number):void {
     this.page = page; 
-    this.getSales();
+    this.getBails();
   }
 
   public pageSizeChanged(limit: number):void {
       this.limit = limit; this.page = 1;
-      this.getSales();
-  }
-
-  public onChangeFilter(event:any){
-    const { date, type } = event;
-    this.date = date; this.type = type;
-    this._crudSvc.requestEvent.emit('');
+      this.getBails();
   }
 
   private listenObserver = () => {
     const observer1$ = this._crudSvc.requestEvent.subscribe((res) => {
-      this.getSales();
+      this.getBails();
     });
 
     this.listSubscribers = [observer1$];
@@ -118,5 +110,5 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.listSubscribers.map(a => a.unsubscribe());
   }
-  
+
 }
