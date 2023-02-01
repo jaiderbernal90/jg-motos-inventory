@@ -153,12 +153,10 @@ class DashboardController extends Controller
         });
 
         $data = Customer::select('full_name','id','id_type_document','document')
+        ->whereHas('salesPending')
         ->with(['typeDocument','sales' => function ($query) { 
             $query->where('status', 2);
             $query->whereNotNull('total_bails');
-        }])
-        ->whereHas(['sales' => function ($query) { 
-            $query->where('status', 2);
         }])
         ->withCount(['sales' => function ($query) { 
             $query->where('status', 2);

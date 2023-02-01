@@ -25,4 +25,13 @@ class Customer extends Model{
         return $this->hasMany(Sale::class,'id_customer');
     }
 
+
+    public function salesPending()
+    {
+        return $this->hasMany(Sale::class,'id_customer')->where('status', 2);
+    }
+
+
+   
+
 }

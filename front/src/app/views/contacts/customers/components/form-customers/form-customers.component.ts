@@ -25,7 +25,7 @@ export class FormCustomersComponent implements OnInit {
   
   ngOnInit(): void {
     this.form = this.fb.group({
-        full_name: [ null, [ Validators.required, Validators.maxLength(255)] ],
+        full_name: [ null, [ Validators.required, Validators.maxLength(255), Validators.minLength(5)] ],
         email: [ null, [ Validators.required] ],
         id_type_document: [ null, [ Validators.required] ],
         document: [ null, [ Validators.required, Validators.maxLength(20)] ],
