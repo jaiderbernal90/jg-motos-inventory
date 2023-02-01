@@ -4,7 +4,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.name' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.name' | translate }}" formControlName="full_name" >
+                    <input nz-input placeholder="{{ 'providers.name' | translate }}" formControlName="full_name" maxlength="150" >
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -12,7 +12,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.email' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.email' | translate }}" formControlName="email" type="email">
+                    <input nz-input placeholder="{{ 'providers.email' | translate }}" formControlName="email" type="email" maxlength="150" >
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -22,7 +22,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.nit' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.nit' | translate }}" formControlName="nit">
+                    <input nz-input placeholder="{{ 'providers.nit' | translate }}" formControlName="nit" maxlength="50" >
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -30,7 +30,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.cellphone' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.cellphone' | translate }}" formControlName="cellphone" type="number">
+                    <input nz-input placeholder="{{ 'providers.cellphone' | translate }}" formControlName="cellphone" type="number" maxlength="10">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -38,7 +38,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.landline' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.landline' | translate }}" formControlName="landline" type="number">
+                    <input nz-input placeholder="{{ 'providers.landline' | translate }}" formControlName="landline" type="number" maxlength="100">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -48,7 +48,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.department' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.department' | translate }}" formControlName="department" >
+                    <input nz-input placeholder="{{ 'providers.department' | translate }}" formControlName="department" maxlength="150">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -56,7 +56,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.city' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'providers.city' | translate }}" formControlName="city">
+                    <input nz-input placeholder="{{ 'providers.city' | translate }}" formControlName="city" maxlength="150">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -66,7 +66,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'providers.address' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <textarea nz-input placeholder="{{ 'providers.address' | translate }}" [nzAutosize]="{ minRows: 2 }" formControlName="address"></textarea>
+                    <textarea nz-input placeholder="{{ 'providers.address' | translate }}" [nzAutosize]="{ minRows: 2 }" formControlName="address" maxlength="150"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </div>

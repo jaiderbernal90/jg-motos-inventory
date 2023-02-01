@@ -39,7 +39,15 @@
         "userAll":"Total usuarios",
         "salesProduct":"Ventas",
         "earning":"Ganancias",
-        "stockLeft":"Existencias restantes"
+        "stockLeft":"Existencias restantes",
+        "invoicesPending":"Facturas pendientes",
+        "providers":"Proveedor",
+        "dueDate":"Fecha de vencimiento",
+        "numDebtors":"Número de creditos",
+        "total":"Total",
+        "clientsDebtors":"Clientes con creditos",
+        "totalDebtor":"Total Deuda",
+        "debtor":"Debe"
     },
     "global":{
         "print":"Imprimir",

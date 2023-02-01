@@ -33,7 +33,7 @@
     
     <div class="row">
         <div class="col-12 mt-4 d-flex justify-content-end">
-            <nz-pagination class="pagination" nzShowSizeChanger nzShowQuickJumper [nzResponsive]="true" [nzTotal]="totalItems" [(nzPageIndex)]="page" (nzPageSizeChange)="pageSizeChanged($event)" (nzPageIndexChange)="pageIndexChanged($event)">
+            <nz-pagination class="pagination" nzShowSizeChanger nzShowQuickJumper [nzResponsive]="true" [nzTotal]="totalItems" [(nzPageIndex)]="page" (nzPageSizeChange)="pageSizeChanged($event)" (nzPageIndexChange)="pageIndexChanged($event)" [nzPageSizeOptions]="[10, 25, 50, 100]"	>
             </nz-pagination>
         </div>
     </div>

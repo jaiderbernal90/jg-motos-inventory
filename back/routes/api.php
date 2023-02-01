@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('getCountUsers', 'getCountUsers');
         Route::get('getRecentSales', 'getRecentSales');
         Route::get('getTopClients', 'getTopClients');
+        Route::get('getTopDebtors', 'getTopDebtors');
+        Route::get('getTopInvoices', 'getTopInvoices');
     });
 
     Route::controller(UserController::class)->prefix('users')->group(function (){

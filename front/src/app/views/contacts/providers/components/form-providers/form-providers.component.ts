@@ -23,14 +23,14 @@ export class FormProvidersComponent implements OnInit {
   
   ngOnInit(): void {
     this.form = this.fb.group({
-      full_name: [ null, [ Validators.required ] ],
-      email: [ null, [ Validators.required] ],
-      nit: [ null, [ Validators.required] ],
-      cellphone: [ null, [ Validators.required] ],
-      landline: [ null, [ Validators.required] ],
-      department: [ null, [ Validators.required] ],
-      city: [ null, [ Validators.required] ],
-      address: [ null, [ Validators.required] ]
+      full_name: [ null, [ Validators.required, Validators.maxLength(150) ] ],
+      email: [ null, [ Validators.required, Validators.maxLength(150)] ],
+      nit: [ null, [ Validators.required, Validators.maxLength(50)] ],
+      cellphone: [ null, [ Validators.required, Validators.maxLength(10)] ],
+      landline: [ null, [ Validators.required, Validators.maxLength(100)] ],
+      department: [ null, [ Validators.required, Validators.maxLength(150)] ],
+      city: [ null, [ Validators.required, Validators.maxLength(150)] ],
+      address: [ null, [ Validators.required, Validators.maxLength(150)] ]
     });
     
     if(this.id) this.getProvider()

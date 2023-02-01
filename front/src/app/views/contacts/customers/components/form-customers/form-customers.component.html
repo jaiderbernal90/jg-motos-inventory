@@ -4,7 +4,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'customers.name' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'customers.name' | translate }}" formControlName="full_name" >
+                    <input nz-input placeholder="{{ 'customers.name' | translate }}" formControlName="full_name" maxlength="255">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -12,7 +12,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'customers.email' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'customers.email' | translate }}" formControlName="email" type="email">
+                    <input nz-input placeholder="{{ 'customers.email' | translate }}" formControlName="email" type="email"  maxlength="255">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -32,7 +32,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'customers.document' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'customers.document' | translate }}" formControlName="document" >
+                    <input nz-input placeholder="{{ 'customers.document' | translate }}" formControlName="document" maxlength="20">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -52,7 +52,7 @@
             <nz-form-item>
                 <nz-form-label>{{ 'customers.cellphone' | translate }}</nz-form-label>
                 <nz-form-control>
-                    <input nz-input placeholder="{{ 'customers.cellphone' | translate }}" formControlName="cellphone" type="number">
+                    <input nz-input placeholder="{{ 'customers.cellphone' | translate }}" formControlName="cellphone" type="number" maxlength="10" >
                 </nz-form-control>
             </nz-form-item>
         </div>
