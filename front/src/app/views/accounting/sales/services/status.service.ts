@@ -11,7 +11,6 @@ export class StatusService {
   statusList:StatusModel[] = [
     { label: 'Pagada', value: 1, color: 'green' },
     { label: 'Abonada', value: 2, color: 'gold' },
-    { label: 'Pendiente', value: 4, color: 'primary' },
   ];
 
   public get():StatusModel[] {

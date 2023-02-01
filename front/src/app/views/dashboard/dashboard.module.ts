@@ -12,6 +12,9 @@ import { CardsRecentSalesComponent } from './components/cards-recent-sales/cards
 import { ChartsModule } from 'ng2-charts';
 import { ComponentsModule } from 'src/app/shared/components.module';
 import { CardRevenuesComponent } from './components/card-revenues/card-revenues.component';
+import { CardInfoInvoicesComponent } from './components/card-info-invoices/card-info-invoices.component';
+import { CardInfoClientsDebtorsComponent } from './components/card-info-clients-debtors/card-info-clients-debtors.component';
+import { ListSalesClientsComponent } from './components/list-sales-clients/list-sales-clients.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { CardRevenuesComponent } from './components/card-revenues/card-revenues.
     CardsTopProductsComponent,
     CardsTopClientsComponent,
     CardsRecentSalesComponent,
-    CardRevenuesComponent
+    CardRevenuesComponent,
+    CardInfoInvoicesComponent,
+    CardInfoClientsDebtorsComponent,
+    ListSalesClientsComponent
   ],
   imports: [
     CommonModule,

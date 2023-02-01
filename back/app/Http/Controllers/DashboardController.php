@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Models\accounting\Order;
 use App\Models\accounting\Sale;
 use App\Models\accounting\SalesDetail;
 use App\Models\contacts\Customer;
+use App\Models\contacts\Provider;
 use App\Models\inventory\Product;
 use App\Models\setting\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -138,6 +141,61 @@ class DashboardController extends Controller
         
         return ResponseHelper::Get($data);
     }
+
+    public function getTopDebtors(Request $request)
+    {
+        $data = [];
+        $page = $request->get('page') ? $request->get('page') : 1;
+        $limit = $request->get('limit') ? $request->get('limit') : 5;
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $data = Customer::select('full_name','id','id_type_document','document')
+        ->with(['typeDocument','sales' => function ($query) { 
+            $query->where('status', 2);
+            $query->whereNotNull('total_bails');
+        }])
+        ->whereHas('sales')
+        ->withCount(['sales' => function ($query) { 
+            $query->where('status', 2);
+        }])
+        ->withSum('sales', (DB::raw('total - sales.total_bails')))
+        ->orderBy('sales_sum_total_salestotal_bails','DESC')
+        ->paginate($limit);
+        
+        return ResponseHelper::Get($data);
+    }
+
+    
+    public function getTopInvoices(Request $request)
+    {
+        $data = [];
+        $page = $request->get('page') ? $request->get('page') : 1;
+        $limit = $request->get('limit') ? $request->get('limit') : 5;
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $data = Provider::select('full_name','nit','id')
+                ->whereHas('orders')
+                ->withCount(['orders' => function ($query) { 
+                    $query->where('payment_status', 2);
+                }])
+                ->with(['orders' => function ($query) { 
+                    $query->select('id','payment_status', 'due_date','total_bails','total','id_provider');
+                    $query->where('payment_status', 2);
+                    $query->orderBy('due_date','DESC');
+                }])
+                ->withSum('orders',(DB::raw('total - orders.total_bails')))
+                ->orderBy('orders_sum_total_orderstotal_bails','DESC')
+                ->paginate($limit);
+        
+        return ResponseHelper::Get($data);
+    }
+    
 
 
     private function getSale():Int { return Sale::where('status', 1)->sum('total'); } 
