@@ -157,7 +157,9 @@ class DashboardController extends Controller
             $query->where('status', 2);
             $query->whereNotNull('total_bails');
         }])
-        ->whereHas('sales')
+        ->whereHas(['sales' => function ($query) { 
+            $query->where('status', 2);
+        }])
         ->withCount(['sales' => function ($query) { 
             $query->where('status', 2);
         }])
