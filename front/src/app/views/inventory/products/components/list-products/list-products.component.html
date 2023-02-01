@@ -26,7 +26,7 @@
                 </ng-container>  
             </td>
             <td>{{ item.brand }}</td>
-            <td>{{ item.applications }}</td>
+            <td><p [innerHTML]="item.applications"></p></td>
             <td>{{item.price_total | currency:'USD': 'symbol':'1.0-0' }}</td>
             <td >
                 <b [ngStyle]="{ 'color': item.status === 'in-stock' ? '#00C82C' : item.status === 'out-stock' ? '#FF0000' : 'gold'}">{{item.stock}}</b>
