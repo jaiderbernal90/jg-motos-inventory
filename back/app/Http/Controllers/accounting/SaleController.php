@@ -162,7 +162,7 @@ class SaleController extends Controller{
         }
 
         $this->deleteSale($data['details']);
-
+        $data->bails()->delete();
         $data->delete();
 
         return ResponseHelper::Delete('Venta eliminada correctamente');

@@ -134,6 +134,7 @@ class OrderController extends Controller{
         if (!$data) {
             return ResponseHelper::NoExits('No existe una orden con el id ' .  $id);
         }
+        $data->bails()->delete();
         $data->delete();
 
         return ResponseHelper::Delete('Orden eliminada correctamente');
