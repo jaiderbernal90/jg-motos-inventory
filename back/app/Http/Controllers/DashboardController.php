@@ -55,10 +55,8 @@ class DashboardController extends Controller
     public function getValueProducts()
     {
         $products = Product::sum(DB::raw('cost * stock'));
-
-        $sales = $this->getSale();
-
-        return ResponseHelper::Get($products - $sales);
+        
+        return ResponseHelper::Get($products);
     }
 
     /**

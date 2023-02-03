@@ -31,4 +31,9 @@ class Sale extends Model{
         return $this->belongsTo(PaymentMethod::class, 'id_payment_method');
     }
 
+    public function bails()
+    {
+        return $this->hasMany(Bail::class,'id_sale');
+    }
+
 }
