@@ -245,17 +245,26 @@
     "closingDaylind":{
         "title":"Cierre diario",
         "sales":"Ventas",
-        "bails":"Abonos",
+        "bails":"Abonos Ventas",
+        "bailsInvoicesClosing":"Abonos Facturas",
+        "balance":"Balance Caja",
         "numSales":"Número de ventas",
         "valueDay":"Monto recaudado",
+        "payDay":"Monto pagado",
         "cash":"Efectivo",
         "bancolombia":"Bancolombia",
         "nequi":"Nequi",
         "daviplata":"Daviplata",
         "numBails":"Número de abonos",
         "bailsDay":"Monto abonado",
+        "invoices":"Facturas",
         "expenses":"Gastos",
         "numExpenses":"Número de gastos",
-        "total":"Total"
+        "numInvoices":"Número de facturas",
+        "total":"Total",
+        "balanceCash":"Valor Efectivo",
+        "balanceNequi":"Valor Nequi",
+        "balanceBancolombia":"Valor Bancolombia",
+        "balanceDaviplata":"Valor Daviplata"
     }
 }

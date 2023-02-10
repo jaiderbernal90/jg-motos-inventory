@@ -11,6 +11,13 @@
     </form>
     <nz-spin [nzSpinning]="isSpinning">
         <div class="row">
+            <div class="col-md-12 col-12">
+                <nz-card>
+                    <app-detail-balance [balanceClosing]="balanceClosing"></app-detail-balance>
+                </nz-card>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6 col-12">
                 <nz-card>
                     <app-detail-sales [salesClosing]="salesClosing"></app-detail-sales>
@@ -19,6 +26,18 @@
             <div class="col-md-6 col-12">
                 <nz-card>
                     <app-detail-bails [bailsClosing]="bailsClosing"></app-detail-bails>
+                </nz-card>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <nz-card>
+                    <app-detail-invoices [invoicesClosing]="invoicesClosing"></app-detail-invoices>
+                </nz-card>
+            </div>
+            <div class="col-md-6 col-12">
+                <nz-card>
+                    <app-detail-bails-invoice [bailsInvoicesClosing]="bailsInvoicesClosing"></app-detail-bails-invoice>
                 </nz-card>
             </div>
             <div class="col-md-6 col-12">

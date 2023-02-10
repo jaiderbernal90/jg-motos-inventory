@@ -11,6 +11,9 @@ import { ComponentsModule } from '../../../shared/components.module';
 import { DetailSalesComponent } from './components/detail-sales/detail-sales.component';
 import { DetailBailsComponent } from './components/detail-bails/detail-bails.component';
 import { DetailExpensesComponent } from './components/detail-expenses/detail-expenses.component';
+import { DetailBalanceComponent } from './components/detail-balance/detail-balance.component';
+import { DetailInvoicesComponent } from './components/detail-invoices/detail-invoices.component';
+import { DetailBailsInvoiceComponent } from './components/detail-bails-invoice/detail-bails-invoice.component';
 
 
 @NgModule({
@@ -18,7 +21,10 @@ import { DetailExpensesComponent } from './components/detail-expenses/detail-exp
     ClosingDaylingComponent,
     DetailSalesComponent,
     DetailBailsComponent,
-    DetailExpensesComponent
+    DetailExpensesComponent,
+    DetailBalanceComponent,
+    DetailInvoicesComponent,
+    DetailBailsInvoiceComponent
   ],
   imports: [
     CommonModule,
