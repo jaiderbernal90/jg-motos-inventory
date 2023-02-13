@@ -45,8 +45,11 @@ export class DetailPaymentComponent implements OnInit, OnDestroy {
   //-------------------------------EVENTS-----------------------------------
   //------------------------------------------------------------------------
   public onChangeStatus(): void {
-    if(!this.id && this.form.get('payment_status').value === 2) this.form.get('bail').setValidators([Validators.required])
+    this.form.get('bail').clearValidators();
+    if(!this.id && this.form.get('payment_status').value === 2) this.form.get('bail').setValidators([Validators.required]);
+    this.form.get('bail').updateValueAndValidity();
   }
+
   public onChangeTax():void {
     this._productDetailSvC.setChangePrice$(true);
   }

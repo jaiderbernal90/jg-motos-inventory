@@ -157,6 +157,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::delete('destroyDetail/{id}', 'destroyDetail');
         Route::get('downloadInvoice/{id}', 'downloadInvoice');
         Route::get('exportExcel', 'exportExcel');
+        Route::get('transformDateSales', 'transformDateSales');
     });
 
     Route::controller(BailController::class)->prefix('bails')->group(function (){

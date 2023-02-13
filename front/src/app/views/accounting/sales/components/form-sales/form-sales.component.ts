@@ -35,6 +35,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.form = this.fb.group({
+      date: [ this.date, [ Validators.required ] ],
       cellphone: [ null, [ Validators.required ] ],
       email: [ null, [ Validators.required ] ],
       id_type_document:[ 1, [  Validators.required ]],
@@ -53,7 +54,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
       products: this.fb.array([])
     },
     {
-      Validators: ValidationsForm.matchValidation('bail', 'total', 'no-same')
+      validator: ValidationsForm.matchValidation('bail', 'total', 'no-same')
     }); 
 
     if(this.id) this.getSale();
@@ -109,7 +110,6 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
   get products():UntypedFormArray{
     return this.form.controls["products"] as UntypedFormArray;
   }
-
   //------------------------------------------------------------------------
   //------------------------AUXILIAR FUNCTIONS------------------------------
   //------------------------------------------------------------------------
