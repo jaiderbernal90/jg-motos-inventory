@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Http\Controllers\accounting;
 
+use App\Helpers\AuditHelper;
 use App\Helpers\InvoiceHelper;
 use Illuminate\Http\Request;
 use App\Models\accounting\Order;
@@ -11,7 +13,8 @@ use App\Models\accounting\BailOrder;
 use App\Models\Local;
 use Carbon\Carbon;
 
-class OrderController extends Controller{
+class OrderController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
@@ -28,13 +31,13 @@ class OrderController extends Controller{
             return $page;
         });
 
-        $data = Order::with(['provider' => function ($query) { 
-            $query->select('id','full_name','nit');
-        },'paymentMethod:id,name'])
-        ->where(function ($query) use ($term) {
-            $query->where('reference', 'like', "%$term%");
-            $query->orWhere('payment_status', 'like', "%$term%");
-        })->orderBy('id', 'DESC')->paginate($limit);
+        $data = Order::with(['provider' => function ($query) {
+            $query->select('id', 'full_name', 'nit');
+        }, 'paymentMethod:id,name'])
+            ->where(function ($query) use ($term) {
+                $query->where('reference', 'like', "%$term%");
+                $query->orWhere('payment_status', 'like', "%$term%");
+            })->orderBy('id', 'DESC')->paginate($limit);
 
         return ResponseHelper::Get($data);
     }
@@ -65,7 +68,9 @@ class OrderController extends Controller{
                 'observations' => $request->input('observations'),
             ]);
 
-            if($status == 2) $this->createBail(@$request->all(), $data);
+            $this->createAudit($data->id, 1);
+            if ($status == 2) $this->createBail(@$request->all(), $data);
+
 
             return ResponseHelper::CreateOrUpdate($data, 'Orden creada correctamente');
         } catch (\Throwable $th) {
@@ -84,7 +89,7 @@ class OrderController extends Controller{
         $data = Order::with('provider')->find($id);
 
         if (!$data) {
-            return ResponseHelper::NoExits('No existe una orden con el id '.  $id);
+            return ResponseHelper::NoExits('No existe una orden con el id ' .  $id);
         }
         return ResponseHelper::Get($data);
     }
@@ -115,6 +120,8 @@ class OrderController extends Controller{
                 'observations' => $request->input('observations'),
             ]);
 
+            $this->createAudit($data->id, 2);
+
             return  ResponseHelper::CreateOrUpdate($data, 'Información actualizada correctamente',);
         } catch (\Throwable $th) {
             return ResponseHelper::Error($th, 'La información no pudo ser actualizada');
@@ -134,6 +141,9 @@ class OrderController extends Controller{
         if (!$data) {
             return ResponseHelper::NoExits('No existe una orden con el id ' .  $id);
         }
+
+        $this->createAudit($data->id, 3);
+
         $data->bails()->delete();
         $data->delete();
 
@@ -150,24 +160,42 @@ class OrderController extends Controller{
         return ResponseHelper::Get($data);
     }
 
-    private function createBail(Array $req,Order $order): Int {
+    private function createBail(array $req, Order $order): Int
+    {
         $bailNew = BailOrder::create([
-            'id_order'=> $order->id,
-            'id_payment_method'=> @$req['id_payment_method'],
-            'price'=> @$req['bail'],
+            'id_order' => $order->id,
+            'id_payment_method' => @$req['id_payment_method'],
+            'price' => @$req['bail'],
         ]);
+
+        $this->createAudit($order->id, 4, $bailNew->id);
 
         $this->updateBailsOrder($order);
         return $bailNew->id;
     }
 
-    private function updateBailsOrder($order) {
+    private function updateBailsOrder($order)
+    {
         $bails = $this->getBailsTotalOrder($order->id);
-        $order->update([ 'total_bails' => $bails ]);
+        $order->update(['total_bails' => $bails]);
     }
 
-    private function getBailsTotalOrder(Int $idOrder): string {
+    private function getBailsTotalOrder(Int $idOrder): string
+    {
         return BailOrder::where('id_order', $idOrder)->sum('price');
+    }
+
+    /**
+     * create audit function
+     */
+    private function createAudit(Int $id, Int $type, Int $idBail = null)
+    {
+        try {
+            $audit = new AuditHelper;
+            $audit->auditOrder($id, $type, $idBail);
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'No se pudo crear la auditoria');
+        }
     }
 
     /**
@@ -176,13 +204,13 @@ class OrderController extends Controller{
     public function downloadInvoice($id)
     {
         $order = Order::select('orders.*', 'payment_methods.name as paymentMethod', 'providers.nit as nitProvider', 'providers.full_name as nameProvider', 'providers.cellphone as cellphoneProvider', 'providers.department as departmentProvider', 'providers.city as cityProvider', 'providers.address as addressProvider')
-        ->leftjoin('payment_methods', 'orders.id_payment_method', '=', 'payment_methods.id')
-        ->leftjoin('providers', 'orders.id_provider', '=', 'providers.id')
-        ->where('orders.id', $id)
-        ->first();
+            ->leftjoin('payment_methods', 'orders.id_payment_method', '=', 'payment_methods.id')
+            ->leftjoin('providers', 'orders.id_provider', '=', 'providers.id')
+            ->where('orders.id', $id)
+            ->first();
 
         $local = Local::where('code', 01)->first();
-        
+
         return InvoiceHelper::downloadInvoices($order, $local);
     }
 }

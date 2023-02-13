@@ -15,6 +15,9 @@ import { CardRevenuesComponent } from './components/card-revenues/card-revenues.
 import { CardInfoInvoicesComponent } from './components/card-info-invoices/card-info-invoices.component';
 import { CardInfoClientsDebtorsComponent } from './components/card-info-clients-debtors/card-info-clients-debtors.component';
 import { ListSalesClientsComponent } from './components/list-sales-clients/list-sales-clients.component';
+import { CardsActivityListComponent } from './components/cards-activity-list/cards-activity-list.component';
+import { InfoTypeActivityComponent } from './components/info-type-activity/info-type-activity.component';
+import { FilterComponent } from './components/filter/filter.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,10 @@ import { ListSalesClientsComponent } from './components/list-sales-clients/list-
     CardRevenuesComponent,
     CardInfoInvoicesComponent,
     CardInfoClientsDebtorsComponent,
-    ListSalesClientsComponent
+    ListSalesClientsComponent,
+    CardsActivityListComponent,
+    InfoTypeActivityComponent,
+    FilterComponent
   ],
   imports: [
     CommonModule,

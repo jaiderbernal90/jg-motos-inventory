@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Http\Controllers\accounting;
 
 use App\Exports\SalesExport;
+use App\Helpers\AuditHelper;
 use App\Helpers\InvoiceHelper;
 use Illuminate\Http\Request;
 use App\Models\accounting\Sale;
@@ -18,7 +20,8 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
-class SaleController extends Controller{
+class SaleController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
@@ -38,7 +41,7 @@ class SaleController extends Controller{
         });
 
         $sale = $this->getSaleBypagination($term);
-        if($date && $type) $sale = $this->getSaleWithFilters($type, $date, $sale); 
+        if ($date && $type) $sale = $this->getSaleWithFilters($type, $date, $sale);
         $data = $sale->orderBy('id', 'DESC')->paginate($limit);
 
         return ResponseHelper::Get($data);
@@ -60,6 +63,7 @@ class SaleController extends Controller{
 
             $data = Sale::create([
                 'reference' => $request->input('reference'),
+                'date' => Carbon::parse($request->input('date'))->toDateTimeString(),
                 'id_customer' => $customer,
                 'id_payment_method' => $request->input('id_payment_method'),
                 'status' => $status,
@@ -70,13 +74,19 @@ class SaleController extends Controller{
                 'observations' => $request->input('observations'),
             ]);
 
-            if($status == 2) $this->createBail(@$request->all(), $data);
-            
+            $this->createAudit($data->id, 1);
+            if ($status == 2) $this->createBail(@$request->all(), $data);
+
             $products = $this->productSalesDetail($products, $data->id);
-            if(isset($products['success']) && !$products['success']){
+            if (isset($products['success']) && !$products['success']) {
                 return ResponseHelper::NoExits($products['message']);
             }
-            SalesDetail::insert($products);
+
+            try {
+                SalesDetail::insert($products);
+            } catch (\Throwable $th) {
+                return ResponseHelper::Error($th, 'El detalle de la venta no pudo ser almacenado');
+            }
 
             return ResponseHelper::CreateOrUpdate($data, 'Venta creada correctamente');
         } catch (Throwable $th) {
@@ -92,14 +102,14 @@ class SaleController extends Controller{
      */
     public function show($id)
     {
-        $data = Sale::with(['details' => function ($query) { 
-            $query->with(['product' => function ($query) { 
-                $query->select('name','id','reference','stock','price_total as price');
+        $data = Sale::with(['details' => function ($query) {
+            $query->with(['product' => function ($query) {
+                $query->select('name', 'id', 'reference', 'stock', 'price_total as price');
             }]);
-        }, 'customer','paymentMethod:id,name'])->find($id);
+        }, 'customer', 'paymentMethod:id,name'])->find($id);
 
         if (!$data) {
-            return ResponseHelper::NoExits('No existe una venta con el id '.  $id);
+            return ResponseHelper::NoExits('No existe una venta con el id ' .  $id);
         }
         return ResponseHelper::Get($data);
     }
@@ -134,12 +144,18 @@ class SaleController extends Controller{
 
             $products = @$request->productsForm;
             $productsSave = $this->productSalesDetailUpdate($products, $data->id);
-            
-            if(isset($productsSave['success']) && !$productsSave['success']){
+
+            if (isset($productsSave['success']) && !$productsSave['success']) {
                 return ResponseHelper::NoExits(@$productsSave['message']);
             }
 
-            SalesDetail::insert($productsSave);
+            try {
+                SalesDetail::insert($productsSave);
+            } catch (\Throwable $th) {
+                return ResponseHelper::Error($th, 'El detalle de la venta no pudo ser almacenado');
+            }
+
+            $this->createAudit($data->id, 2);
 
             return  ResponseHelper::CreateOrUpdate($data, 'Información actualizada correctamente',);
         } catch (Throwable $th) {
@@ -161,6 +177,8 @@ class SaleController extends Controller{
             return ResponseHelper::NoExits('No existe una venta con el id ' .  $id);
         }
 
+        $this->createAudit($data->id, 3);
+
         $this->deleteSale($data['details']);
         $data->bails()->delete();
         $data->delete();
@@ -170,13 +188,13 @@ class SaleController extends Controller{
 
     public function deleteSale($details): void
     {
-        foreach(@$details as $detail){
+        foreach (@$details as $detail) {
             $productAvailable = Product::find(@$detail['product_id']);
-            $this->backToStock($productAvailable,@$detail['amount']);
+            $this->backToStock($productAvailable, @$detail['amount']);
         }
     }
 
-     /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -185,13 +203,13 @@ class SaleController extends Controller{
     public function destroyDetail($id)
     {
         $data = SalesDetail::find($id);
-        
+
         if (!$data) {
             return ResponseHelper::NoExits('No existe un detalle de venta con el id ' .  $id);
         }
 
         $productAvailable = Product::find($data['product_id']);
-        $this->backToStock($productAvailable,$data['amount']);
+        $this->backToStock($productAvailable, $data['amount']);
         $data->delete();
 
         return ResponseHelper::Delete('Registro eliminado correctamente');
@@ -210,7 +228,7 @@ class SaleController extends Controller{
         return ResponseHelper::Get($paymentMethods);
     }
 
-     /**
+    /**
      * get id latest
      */
     public function getCount()
@@ -220,72 +238,79 @@ class SaleController extends Controller{
         return ResponseHelper::Get($data);
     }
 
-     /**
+    /**
      * Display the specified resource.
      */
     public function downloadInvoice($id)
     {
-        $sale = Sale::select('sales.reference', 'sales.subtotal', 'sales.tax', 'sales.total', 'payment_methods.name as paymentMethod', 'sales.created_at')
-        ->leftjoin('payment_methods', 'sales.id_payment_method', '=', 'payment_methods.id')
-        ->where('sales.id', $id)
-        ->first();
+        $sale = Sale::select('sales.reference', 'sales.subtotal', 'sales.tax', 'sales.total', 'payment_methods.name as paymentMethod', 'sales.created_at', 'sales.date')
+            ->leftjoin('payment_methods', 'sales.id_payment_method', '=', 'payment_methods.id')
+            ->where('sales.id', $id)
+            ->first();
 
-        $detailSail = SalesDetail::select('products.name', 'sales_detail.amount','sales_detail.price')
-        ->leftjoin('products', 'sales_detail.product_id', '=', 'products.id')
-        ->where('sale_id', $id)
-        ->get();
+        $detailSail = SalesDetail::select('products.name', 'sales_detail.amount', 'sales_detail.price')
+            ->leftjoin('products', 'sales_detail.product_id', '=', 'products.id')
+            ->where('sale_id', $id)
+            ->get();
 
         $local = Local::where('code', 01)->first();
-        
+
         return InvoiceHelper::download($sale, $detailSail, $local);
     }
 
-    private function createBail(Array $req,Sale $sale): Int {
+    private function createBail(array $req, Sale $sale): Int
+    {
         $bailNew = Bail::create([
-            'id_sale'=> $sale->id,
-            'id_payment_method'=> @$req['id_payment_method'],
-            'price'=> @$req['bail'],
+            'id_sale' => $sale->id,
+            'id_payment_method' => @$req['id_payment_method'],
+            'price' => @$req['bail'],
         ]);
+
+        $this->createAudit($sale->id, 4, $bailNew->id);
 
         $this->updateBailsSale($sale);
         return $bailNew->id;
     }
 
-    private function updateBailsSale($sale) {
+    private function updateBailsSale($sale)
+    {
         $bails = $this->getBailsTotalSale($sale->id);
-        $sale->update([ 'total_bails' => $bails ]);
+        $sale->update(['total_bails' => $bails]);
     }
 
-    private function getBailsTotalSale(Int $idSale): string {
+    private function getBailsTotalSale(Int $idSale): string
+    {
         return Bail::where('id_sale', $idSale)->sum('price');
     }
 
-    private function createClientForSale(Array $customer): Int {
+    private function createClientForSale(array $customer): Int
+    {
         $customerNew = Customer::create([
-            'id_type_person'=> @$customer['id_type_person'],
-            'full_name'=> @$customer['full_name'],
-            'id_type_document'=> @$customer['id_type_document'],
-            'document'=> @$customer['document'],
-            'cellphone'=> @$customer['cellphone'],
-            'email'=> @$customer['email'],
+            'id_type_person' => @$customer['id_type_person'],
+            'full_name' => @$customer['full_name'],
+            'id_type_document' => @$customer['id_type_document'],
+            'document' => @$customer['document'],
+            'cellphone' => @$customer['cellphone'],
+            'email' => @$customer['email'],
         ]);
 
         return $customerNew->id;
     }
 
-    private function productSalesDetailUpdate($products, $id){
+    private function productSalesDetailUpdate($products, $id)
+    {
         $arr = [];
-        foreach($products as $product){
+        foreach ($products as $product) {
             $saleDetail = SalesDetail::find(@$product['sale_id']);
             $productAvailable = Product::find($product['product_id']);
             $amountAvailable = @$product['amount'];
-            
-            if($saleDetail) {
+
+            if ($saleDetail) {
                 $this->backToStock($productAvailable, @$saleDetail->amount);
                 $amountAvailable = @$productAvailable->stock;
             }
 
-            if(@$productAvailable->stock < @$amountAvailable) {
+            if (@$productAvailable->stock < @$amountAvailable) {
                 return [
                     'message' => "No hay unidades disponibles para <b>$productAvailable->name</b>. <br> <b>$productAvailable->stock unidad/es</b> disponibles",
                     'success' => false
@@ -293,12 +318,12 @@ class SaleController extends Controller{
                 break;
             }
 
-            if($saleDetail) {
-                $saleDetail->update(['product_id'=> $product['product_id'],'amount' => @$product['amount'],'price' => @$product['price']]);
+            if ($saleDetail) {
+                $saleDetail->update(['product_id' => $product['product_id'], 'amount' => @$product['amount'], 'price' => @$product['price']]);
             }
-            
+
             $this->updateStock($productAvailable, @$product['amount']);
-            if(!$saleDetail){
+            if (!$saleDetail) {
                 $product['created_at'] = now();
                 $product['sale_id'] = $id;
                 $arr[] = $product;
@@ -307,12 +332,13 @@ class SaleController extends Controller{
         return $arr;
     }
 
-    private function productSalesDetail($products, $id){
+    private function productSalesDetail($products, $id)
+    {
         $arr = [];
-        foreach($products as $product){
+        foreach ($products as $product) {
             $productAvailable = Product::find($product['product_id']);
-            
-            if(@$productAvailable->stock < @$product['amount']) {
+
+            if (@$productAvailable->stock < @$product['amount']) {
                 return [
                     'message' => "No hay unidades disponibles para <b>$productAvailable->name</b>. <br> <b>$productAvailable->stock unidad/es</b> disponibles",
                     'success' => false
@@ -326,63 +352,99 @@ class SaleController extends Controller{
         }
         return $arr;
     }
-    
-    private function updateStock($product, $amount){
+
+    private function updateStock($product, $amount)
+    {
         $newStock = $product->stock - $amount;
         $this->updateProductStock($product, $newStock);
     }
 
-    private function backToStock($product, $amount){
-       $newStock = $product->stock + $amount;
-       $this->updateProductStock($product, $newStock);
+    private function backToStock($product, $amount)
+    {
+        $newStock = $product->stock + $amount;
+        $this->updateProductStock($product, $newStock);
     }
 
-    private function updateProductStock(Product $product, Int $newStock){
+    private function updateProductStock(Product $product, Int $newStock)
+    {
         $status = $this->newStatusProduct($newStock, $product->stockMin);
-        $product->update(['stock'=> $newStock,'status' => $status]);
+        $product->update(['stock' => $newStock, 'status' => $status]);
     }
 
-    private function newStatusProduct(Int $stock, Int $minStock):string {
+    private function newStatusProduct(Int $stock, Int $minStock): string
+    {
         $newStatus = 'in-stock';
-        if($minStock >= $stock){
+        if ($minStock >= $stock) {
             $newStatus = 'low-stock';
         }
-        if($stock == 0){
+        if ($stock == 0) {
             $newStatus = 'out-stock';
         }
         return $newStatus;
     }
-    
-    private function getSaleBypagination($term) { 
+
+    private function getSaleBypagination($term)
+    {
         return Sale::select('sales.*')
-        ->with(['customer' => function ($query) { 
-            $query->select('id','full_name', 'id_type_document','document');
-            $query->with(['typeDocument:id,prefix']);
-        },'paymentMethod:id,name'])
-        ->where(function ($query) use ($term) {
-            $query->where('reference', 'like', "%$term%");
-            $query->orWhere('status', 'like', "%$term%");
-        });
+            ->with(['customer' => function ($query) {
+                $query->select('id', 'full_name', 'id_type_document', 'document');
+                $query->with(['typeDocument:id,prefix']);
+            }, 'paymentMethod:id,name'])
+            ->where(function ($query) use ($term) {
+                $query->where('reference', 'like', "%$term%");
+                $query->orWhere('status', 'like', "%$term%");
+            });
     }
 
-    private function getSaleWithFilters(String $type, $date, $expense) {
-        if($type == 'month'){
+    private function getSaleWithFilters(String $type, $date, $expense)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getMonthAndYear($date);
-            return $expense->whereMonth('sales.created_at', $rangeDates['month'])->whereYear('sales.created_at', $rangeDates['year']);
+            return $expense->whereMonth('sales.date', $rangeDates['month'])->whereYear('sales.date', $rangeDates['year']);
         }
-        return $expense->whereDate('sales.created_at', $date);
-    } 
-    
-    private function getMonthAndYear($date) {
+        return $expense->whereDate('sales.date', $date);
+    }
+
+    private function getMonthAndYear($date)
+    {
         $parseDate = Carbon::parse($date);
         $arr['month'] = $parseDate->format('m');
         $arr['year'] = $parseDate->format('Y');
         return $arr;
     }
-    
+
+    /**
+     * create audit function
+     */
+    private function createAudit(Int $id, Int $type, Int $idBail = null)
+    {
+        try {
+            $audit = new AuditHelper;
+            $audit->auditSale($id, $type, $idBail);
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'No se pudo crear la auditoria');
+        }
+    }
+
+
+    /**
+     * create audit function
+     */
+    public function transformDateSales()
+    {
+        $sales = Sale::get();
+
+        foreach($sales as $sale){
+            $dateTime = Carbon::parse($sale->created_at)->toDateTimeString();
+            $sale->date = $dateTime;
+            $sale->update();
+        }
+    }
+
+
     /**
      * Export resource data
-    */
+     */
     public function exportExcel()
     {
         return Excel::download(new SalesExport, 'Listado-ventas.xlsx');

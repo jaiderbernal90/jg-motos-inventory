@@ -127,10 +127,11 @@ class AuditHelper
         }
     }
 
-    public function auditOrder(Int $id, Int $method){ 
+    public function auditOrder(Int $id, Int $method, Int $idBail = null){ 
         try {
             AuditOrder::create([
                 'id_order' => $id,
+                'id_bail_order' => $idBail,
                 'id_user' => $this->id,
                 'type' => $method,
             ]);
@@ -155,10 +156,11 @@ class AuditHelper
         }
     }
 
-    public function auditSale(Int $id, Int $method){ 
+    public function auditSale(Int $id, Int $method, Int $idBail = null){ 
         try {
             AuditSale::create([
                 'id_sale' => $id,
+                'id_bail' => $idBail,
                 'id_user' => $this->id,
                 'type' => $method,
             ]);

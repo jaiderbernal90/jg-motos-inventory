@@ -23,6 +23,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { TitleFilterComponent } from './components/title-filter/title-filter.component';
 import { FilterDateComponent } from './components/filter-date/filter-date.component';
 import { ComponentsModule } from './components.module';
+import { ActionAuditPipe } from './pipes/action-audit.pipe';
 
 const LIST_MODULES = [
     SearchPipe,
@@ -32,7 +33,8 @@ const LIST_MODULES = [
     ColorProductPipe,
     StatusSalePipe,
     FilterDateComponent,
-    TitleFilterComponent
+    TitleFilterComponent,
+    ActionAuditPipe
 ]
 
 @NgModule({
@@ -68,7 +70,8 @@ const LIST_MODULES = [
         StatusSalePipe,
         ExportButtonComponent,
         FilterDateComponent,
-        TitleFilterComponent
+        TitleFilterComponent,
+        ActionAuditPipe
     ],
     providers: [
         ThemeConstantService

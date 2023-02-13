@@ -31,7 +31,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG, CurrencyMaskModule } from 'ng2-currency-mask';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -76,7 +76,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     NzDividerModule,
     NzSpinModule,
     CurrencyMaskModule,
-    NzSpaceModule
+    NzSpaceModule,
+    NzEmptyModule
   ],
   providers: [
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }

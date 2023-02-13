@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('id_sale')->references('id')->on('sales')->onDelete('cascade');
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
-            $table->integer('type')->comment('1 -> create // 2 -> update // 3 -> delete');;
+            $table->integer('type')->comment('1 -> create // 2 -> update // 3 -> delete');
             $table->timestamps();
         });
     }

@@ -28,7 +28,7 @@ export class ListProductsFormComponent implements OnInit {
 
   public onChangeAmount(indexProduct:number){
     this._productDetailSvC.setChangePrice$(true)
-    let { stock, amount }= this.products.at(indexProduct).value;
+    let { stock, amount } = this.products.at(indexProduct).value;
     if(amount > stock) this._notificationSvC.info('Atención','No hay suficientes unidades disponibles','top');
   }
 
