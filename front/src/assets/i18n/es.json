@@ -240,6 +240,7 @@
     },
     "reports":{
         "date":"Día",
+        "year":"Año",
         "month":"Mes"
     },
     "closingDaylind":{

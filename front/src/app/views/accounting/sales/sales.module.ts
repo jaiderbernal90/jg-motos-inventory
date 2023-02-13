@@ -49,9 +49,9 @@ import { ProductsModule } from '../../inventory/products/products.module';
   imports: [
     CommonModule,
     SalesRoutingModule,
-    ComponentsModule,
     FormsModule,
     ReactiveFormsModule,
+    ComponentsModule,
     QuillModule.forRoot(), 
     TranslateModule,
     SharedModule,

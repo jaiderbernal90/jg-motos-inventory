@@ -45,17 +45,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::controller(DashboardController::class)->prefix('dashboard')->group(function (){
-        Route::get('getSales', 'getSales');
-        Route::get('getCountSales', 'getCountSales');
+        Route::post('getSales', 'getSales');
+        Route::post('getCountSales', 'getCountSales');
         Route::get('getCountProducts', 'getCountProducts');
-        Route::get('getValueProducts', 'getValueProducts');
+        Route::post('getValueProducts', 'getValueProducts');
         Route::get('getTopProducts', 'getTopProducts');
-        Route::get('getCountClients', 'getCountClients');
+        Route::post('getCountClients', 'getCountClients');
         Route::get('getCountUsers', 'getCountUsers');
         Route::get('getRecentSales', 'getRecentSales');
         Route::get('getTopClients', 'getTopClients');
         Route::get('getTopDebtors', 'getTopDebtors');
         Route::get('getTopInvoices', 'getTopInvoices');
+        Route::post('getActivityProducts', 'getActivityProducts');
+        Route::post('getActivitySales', 'getActivitySales');
+        Route::post('getActivityOrders', 'getActivityOrders');
     });
 
     Route::controller(UserController::class)->prefix('users')->group(function (){

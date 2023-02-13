@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
-import { Validators, FormBuilder, UntypedFormGroup, UntypedFormArray, AbstractControl } from '@angular/forms';
+import { Validators, FormBuilder, UntypedFormGroup, UntypedFormArray, AbstractControl, UntypedFormBuilder } from '@angular/forms';
 import { CrudServices } from '../../../../../shared/services/crud.service';
 import { Router } from '@angular/router';
 import { StatusModel } from '../../../../../shared/interfaces/status';
@@ -23,7 +23,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
   typeDocumentsList: any;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private _crudSvc:CrudServices,
     private router:Router,
     private readonly changeDetectorRef: ChangeDetectorRef
@@ -53,7 +53,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
       products: this.fb.array([])
     },
     {
-      validator: ValidationsForm.matchValidation('bail', 'total', 'no-same')
+      Validators: ValidationsForm.matchValidation('bail', 'total', 'no-same')
     }); 
 
     if(this.id) this.getSale();

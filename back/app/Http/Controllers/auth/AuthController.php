@@ -49,7 +49,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
         
-        if(Auth::attempt(['email' => @$request->email, 'password' => @$request->password], true)){
+        if(Auth::attempt(['email' => @$request->email, 'password' => @$request->password], false)){
             $user = Auth::user();
             $token = $user->createToken('token')->plainTextToken;
             $cookie = cookie('cookie_token', $token, 60 * 24);

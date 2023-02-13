@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\accounting;
 
+use App\Helpers\AuditHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Models\accounting\BailOrder;
@@ -11,7 +12,7 @@ use Illuminate\Pagination\Paginator;
 
 class BailOrderController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -30,14 +31,14 @@ class BailOrderController extends Controller
 
         $data = BailOrder::select('bails_orders.*')
             ->where('id_order', $order)
-            ->with(['order','paymentMethod:id,name'])
+            ->with(['order', 'paymentMethod:id,name'])
             ->where(function ($query) use ($term) {
                 $query->where('price', 'like', "%$term%");
             })->orderBy('id', 'DESC')->paginate($limit);
 
         $total_bails = BailOrder::where('id_order', $order)->sum('price');
 
-        return ResponseHelper::GetTwo($data,$total_bails);
+        return ResponseHelper::GetTwo($data, $total_bails);
     }
 
     /**
@@ -48,7 +49,7 @@ class BailOrderController extends Controller
     public function create(Request $request)
     {
         $validateAmount = $this->validateAmount($request->id_order, $request->price);
-        if ($validateAmount){
+        if ($validateAmount) {
             return ResponseHelper::NoExits('No puedes hacer un abono que supere al total de la factura');
         }
         try {
@@ -58,6 +59,7 @@ class BailOrderController extends Controller
                 'price' => $request->input('price')
             ]);
 
+            $this->createAudit($data->id_order, 4, $data->id);
             $this->updateBailsOrder($data);
 
             return ResponseHelper::CreateOrUpdate($data, 'Abono creado correctamente');
@@ -66,22 +68,38 @@ class BailOrderController extends Controller
         }
     }
 
-    private function validateAmount($idOrder, $price){
+    private function validateAmount($idOrder, $price)
+    {
         $data = Order::where('id', $idOrder)->first();
-        if (($data->total_bails + $price) > $data->total){
+        if (($data->total_bails + $price) > $data->total) {
             return true;
         }
         return false;
     }
 
-    private function updateBailsOrder($bail) {
+    private function updateBailsOrder($bail)
+    {
         $bails = $this->getBailsTotalOrder($bail->id_order);
         $order = Order::find($bail->id_order);
-        if($bails == $order->total) $order->update(['payment_status' => 1]);
-        $order->update([ 'total_bails' => $bails ]);
+        if ($bails == $order->total) $order->update(['payment_status' => 1]);
+        $order->update(['total_bails' => $bails]);
     }
 
-    private function getBailsTotalOrder(Int $idOrder): string {
+    private function getBailsTotalOrder(Int $idOrder): string
+    {
         return BailOrder::where('id_order', $idOrder)->sum('price');
+    }
+
+    /**
+     * create audit function
+     */
+    private function createAudit(Int $id, Int $type, Int $idBail)
+    {
+        try {
+            $audit = new AuditHelper;
+            $audit->auditOrder($id, $type, $idBail);
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'No se pudo crear la auditoria');
+        }
     }
 }

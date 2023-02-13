@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\accounting;
 
 use App\Exports\SalesExport;
+use App\Helpers\AuditHelper;
 use App\Helpers\InvoiceHelper;
 use Illuminate\Http\Request;
 use App\Models\accounting\Sale;
@@ -70,14 +71,20 @@ class SaleController extends Controller{
                 'observations' => $request->input('observations'),
             ]);
 
+            $this->createAudit($data->id, 1);
             if($status == 2) $this->createBail(@$request->all(), $data);
             
             $products = $this->productSalesDetail($products, $data->id);
             if(isset($products['success']) && !$products['success']){
                 return ResponseHelper::NoExits($products['message']);
             }
-            SalesDetail::insert($products);
 
+            try {
+                SalesDetail::insert($products);
+            } catch (\Throwable $th) {
+                return ResponseHelper::Error($th, 'El detalle de la venta no pudo ser almacenado');
+            }
+            
             return ResponseHelper::CreateOrUpdate($data, 'Venta creada correctamente');
         } catch (Throwable $th) {
             return ResponseHelper::Error($th, 'La venta no pudo ser creada');
@@ -139,7 +146,13 @@ class SaleController extends Controller{
                 return ResponseHelper::NoExits(@$productsSave['message']);
             }
 
-            SalesDetail::insert($productsSave);
+            try {
+                SalesDetail::insert($productsSave);
+            } catch (\Throwable $th) {
+                return ResponseHelper::Error($th, 'El detalle de la venta no pudo ser almacenado');
+            }
+
+            $this->createAudit($data->id, 2);
 
             return  ResponseHelper::CreateOrUpdate($data, 'Información actualizada correctamente',);
         } catch (Throwable $th) {
@@ -160,6 +173,8 @@ class SaleController extends Controller{
         if (!$data) {
             return ResponseHelper::NoExits('No existe una venta con el id ' .  $id);
         }
+
+        $this->createAudit($data->id, 3);
 
         $this->deleteSale($data['details']);
         $data->bails()->delete();
@@ -246,6 +261,8 @@ class SaleController extends Controller{
             'id_payment_method'=> @$req['id_payment_method'],
             'price'=> @$req['bail'],
         ]);
+
+        $this->createAudit($sale->id, 4, $bailNew->id);
 
         $this->updateBailsSale($sale);
         return $bailNew->id;
@@ -379,6 +396,20 @@ class SaleController extends Controller{
         $arr['year'] = $parseDate->format('Y');
         return $arr;
     }
+
+    /**
+     * create audit function
+     */
+    private function createAudit(Int $id, Int $type, Int $idBail = null)
+    {
+        try {
+            $audit = new AuditHelper;
+            $audit->auditSale($id, $type, $idBail);
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'No se pudo crear la auditoria');
+        }
+    }
+
     
     /**
      * Export resource data

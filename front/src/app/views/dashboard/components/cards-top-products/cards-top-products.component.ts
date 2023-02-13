@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CrudServices } from '../../../../shared/services/crud.service';
 import { finalize } from 'rxjs/operators';
 
@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './cards-top-products.component.html',
   styleUrls: ['./cards-top-products.component.scss']
 })
-export class CardsTopProductsComponent implements OnInit {
+export class CardsTopProductsComponent implements OnInit, OnDestroy {
  
   productsList = []    
   loading:boolean; 
@@ -15,6 +15,9 @@ export class CardsTopProductsComponent implements OnInit {
   constructor(
     private _crudSvc:CrudServices,
   ) { }
+
+  ngOnDestroy(): void {
+  }
 
   ngOnInit():void {
     this.getTopProducts()

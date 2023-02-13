@@ -6,6 +6,9 @@ use App\Helpers\ResponseHelper;
 use App\Models\accounting\Order;
 use App\Models\accounting\Sale;
 use App\Models\accounting\SalesDetail;
+use App\Models\audits\AuditOrder;
+use App\Models\audits\AuditProduct;
+use App\Models\audits\AuditSale;
 use App\Models\contacts\Customer;
 use App\Models\contacts\Provider;
 use App\Models\inventory\Product;
@@ -13,6 +16,7 @@ use App\Models\setting\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -22,9 +26,51 @@ class DashboardController extends Controller
     /**
      * to earn an income 
      */
-    public function getSales()
+    public function getSales(Request $request)
     {
-        $data = $this->getSale();
+        $date = $request->input('date');
+        $type = $request->input('type');
+
+        $sale = $this->getSale();
+        if($date) $sale = $this->getModelWithFilters($date, $sale, $type); 
+        $sale = $sale->where('status', 1);
+
+        $data = $sale->sum('total');
+
+        return ResponseHelper::Get($data);
+    }
+
+
+     /**
+     * to earn an income 
+     */
+    public function getActivityProducts(Request $request)
+    {
+        $page = $request->input('page') ?? 1;
+        $limit = 10;
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $data = AuditProduct::with(['user:id,full_name', 'product:id,reference'])->orderBy('created_at','DESC')->paginate($limit);
+
+        return ResponseHelper::Get($data);
+    }
+
+     /**
+     * to earn an income 
+     */
+    public function getActivitySales(Request $request)
+    {
+        $page = $request->input('page') ?? 1;
+        $limit = 10;
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $data = AuditSale::with(['user:id,full_name', 'sale:id,reference','bail:id,price'])->orderBy('created_at', 'DESC')->paginate($limit);
 
         return ResponseHelper::Get($data);
     }
@@ -32,13 +78,37 @@ class DashboardController extends Controller
     /**
      * to earn an income 
      */
-    public function getCountSales()
+    public function getActivityOrders(Request $request)
     {
-        $data = Sale::count();
+        $page = $request->input('page') ?? 1;
+        $limit = 10;
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $data = AuditOrder::with(['user:id,full_name', 'order:id,reference','bail:id,price'])->orderBy('created_at', 'DESC')->paginate($limit);
 
         return ResponseHelper::Get($data);
     }
 
+    
+
+    /**
+     * to earn an income 
+     */
+    public function getCountSales(Request $request)
+    {
+        $date = $request->input('date');
+        $type = $request->input('type');
+
+        $sale = $this->getSale();
+        if($date) $sale = $this->getModelWithFilters($date, $sale, $type); 
+
+        $data = $sale->count();
+
+        return ResponseHelper::Get($data);
+    }
      /**
      * to earn an income 
      */
@@ -52,11 +122,17 @@ class DashboardController extends Controller
     /**
         * to earn an income 
     */
-    public function getValueProducts()
+    public function getValueProducts(Request $request)
     {
-        $products = Product::sum(DB::raw('cost * stock'));
+        $date = $request->input('date');
+        $type = $request->input('type');
+
+        $products = $this->getProduct();
+        if($date) $products = $this->getModelWithFilters($date, $products, $type); 
+
+        $data = $products->sum(DB::raw('cost * stock'));
         
-        return ResponseHelper::Get($products);
+        return ResponseHelper::Get($data);
     }
 
     /**
@@ -88,9 +164,15 @@ class DashboardController extends Controller
     /**
      * to earn an income 
     */
-    public function getCountClients()
+    public function getCountClients(Request $request)
     {
-        $data = Customer::count();
+        $date = $request->input('date');
+        $type = $request->input('type');
+
+        $customer = $this->getCustomer();
+        if($date) $customer = $this->getModelWithFilters($date, $customer, $type); 
+
+        $data = $customer->count();
 
         return ResponseHelper::Get($data);
     }
@@ -193,8 +275,21 @@ class DashboardController extends Controller
         
         return ResponseHelper::Get($data);
     }
-    
 
+    private function getModelWithFilters($date, $model, $type) {
+        $rangeDates = $this->getMonthAndYear($date);
+        if($type == 'month') return $model->whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
+        return $model->whereYear('created_at', $rangeDates['year']);
+    } 
 
-    private function getSale():Int { return Sale::where('status', 1)->sum('total'); } 
+    private function getMonthAndYear($date) {
+        $parseDate = Carbon::parse($date);
+        $arr['month'] = $parseDate->format('m');
+        $arr['year'] = $parseDate->format('Y');
+        return $arr;
+    }
+
+    private function getSale() { return Sale::orderBy('created_at','DESC'); } 
+    private function getCustomer() { return Customer::orderBy('created_at','DESC'); } 
+    private function getProduct() { return Product::orderBy('created_at','DESC'); } 
 }

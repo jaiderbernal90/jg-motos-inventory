@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\accounting;
 
+use App\Helpers\AuditHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Models\accounting\Bail;
@@ -30,14 +31,14 @@ class BailController extends Controller
 
         $data = Bail::select('bails.*')
             ->where('bails.id_sale', $sale)
-            ->with(['sale','paymentMethod:id,name'])
+            ->with(['sale', 'paymentMethod:id,name'])
             ->where(function ($query) use ($term) {
                 $query->where('price', 'like', "%$term%");
             })->orderBy('id', 'DESC')->paginate($limit);
 
         $total_bails = Bail::select('bails.*')->where('bails.id_sale', $sale)->sum('bails.price');
 
-        return ResponseHelper::GetTwo($data,$total_bails);
+        return ResponseHelper::GetTwo($data, $total_bails);
     }
 
     /**
@@ -48,7 +49,7 @@ class BailController extends Controller
     public function create(Request $request)
     {
         $validateAmount = $this->validateAmount($request->id_sale, $request->price);
-        if ($validateAmount){
+        if ($validateAmount) {
             return ResponseHelper::NoExits('No puedes hacer un abono que supere al total de la venta');
         }
         try {
@@ -58,7 +59,10 @@ class BailController extends Controller
                 'price' => $request->input('price')
             ]);
 
+            $this->createAudit($data->id_sale, 4, $data->id);
+
             $this->updateBailsSale($data);
+
 
             return ResponseHelper::CreateOrUpdate($data, 'Abono creado correctamente');
         } catch (\Throwable $th) {
@@ -66,22 +70,39 @@ class BailController extends Controller
         }
     }
 
-    private function validateAmount($idSale, $price){
+    private function validateAmount($idSale, $price)
+    {
         $data = Sale::where('id', $idSale)->first();
-        if (($data->total_bails + $price) > $data->total){
+        if (($data->total_bails + $price) > $data->total) {
             return true;
         }
         return false;
     }
 
-    private function updateBailsSale($bail) {
+    private function updateBailsSale($bail)
+    {
         $bails = $this->getBailsTotalSale($bail->id_sale);
         $sale = Sale::find($bail->id_sale);
-        if($bails == $sale->total) $sale->update(['status' => 1]);
-        $sale->update([ 'total_bails' => $bails ]);
+        if ($bails == $sale->total) $sale->update(['status' => 1]);
+        $sale->update(['total_bails' => $bails]);
     }
 
-    private function getBailsTotalSale(Int $idSale): string {
+    private function getBailsTotalSale(Int $idSale): string
+    {
         return Bail::where('id_sale', $idSale)->sum('price');
+    }
+
+
+    /**
+     * create audit function
+     */
+    private function createAudit(Int $id, Int $type, Int $idBail)
+    {
+        try {
+            $audit = new AuditHelper;
+            $audit->auditSale($id, $type, $idBail);
+        } catch (\Throwable $th) {
+            return ResponseHelper::Error($th, 'No se pudo crear la auditoria');
+        }
     }
 }
