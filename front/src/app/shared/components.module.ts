@@ -77,7 +77,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     NzSpinModule,
     CurrencyMaskModule,
     NzSpaceModule,
-    NzEmptyModule
+    NzEmptyModule,
   ],
   providers: [
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
