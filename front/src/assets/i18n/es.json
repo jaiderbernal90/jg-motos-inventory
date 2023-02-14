@@ -266,6 +266,7 @@
         "balanceCash":"Valor Efectivo",
         "balanceNequi":"Valor Nequi",
         "balanceBancolombia":"Valor Bancolombia",
-        "balanceDaviplata":"Valor Daviplata"
+        "balanceDaviplata":"Valor Daviplata",
+        "revenue":"Ganancia"
     }
 }

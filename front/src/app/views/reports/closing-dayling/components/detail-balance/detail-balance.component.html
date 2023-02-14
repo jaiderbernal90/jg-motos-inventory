@@ -6,6 +6,13 @@
         <div class="row mb-5">
             <div class="col-3">
                 <i nz-icon nzType="dollar-circle" class="opacity-10"></i>
+                <span class="mr-3 ml-1"> <b>{{ 'closingDaylind.revenue' | translate }}:</b> </span>
+                <span>${{ balanceClosing?.revenue | number }}</span>
+            </div>
+        </div>
+        <div class="row mb-5">
+            <div class="col-3">
+                <i nz-icon nzType="dollar-circle" class="opacity-10"></i>
                 <span class="mr-3 ml-1"> <b>{{ 'closingDaylind.balanceCash' | translate }}:</b> </span>
                 <span>${{ balanceClosing?.balanceCash | number }}</span>
             </div>

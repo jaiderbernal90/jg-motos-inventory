@@ -11,6 +11,7 @@ use App\Models\accounting\Order;
 use App\Models\accounting\Sale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -61,6 +62,12 @@ class ReportController extends Controller
         $data['balance']['balanceNequi'] = $data['sales']['nequi'] + $data['bails']['nequi'] - $data['invoices']['nequi'] - $data['bailsInvoices']['nequi'];
         $data['balance']['balanceBancolombia'] = $data['sales']['bancolombia'] + $data['bails']['bancolombia'] - $data['invoices']['bancolombia'] - $data['bailsInvoices']['bancolombia'];
         $data['balance']['balanceDaviplata'] = $data['sales']['daviplata'] + $data['bails']['daviplata'] - $data['invoices']['daviplata'] - $data['bailsInvoices']['daviplata'];
+        $revenue = $this->getSale($type, $date)
+        ->leftjoin('sales_detail', 'sales.id', '=', 'sales_detail.sale_id')
+        ->leftjoin('products', 'sales_detail.product_id', '=', 'products.id')
+        ->where('sales.status', 1)
+        ->sum(DB::raw('sales_detail.amount * sales_detail.price - sales_detail.amount * products.cost'));
+        $data['balance']['revenue'] = $revenue;
 
         return ResponseHelper::Get($data);
     }
@@ -68,9 +75,9 @@ class ReportController extends Controller
     private function getSale(String $type, $date){
         if($type == 'month' ){
             $rangeDates = $this->getLastDayMonth($date);
-            return Sale::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
+            return Sale::whereMonth('sales.date', $rangeDates['month'])->whereYear('sales.date', $rangeDates['year']);
         }
-        return Sale::whereDate('created_at', $date);
+        return Sale::whereDate('sales.date', $date);
     }
 
     private function getBail(String $type, $date){
