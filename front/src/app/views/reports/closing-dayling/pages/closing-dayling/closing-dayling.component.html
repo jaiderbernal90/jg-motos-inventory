@@ -11,13 +11,51 @@
     </form>
     <nz-spin [nzSpinning]="isSpinning">
         <div class="row">
-            <div class="col-md-12 col-12">
-                <nz-card>
-                    <app-detail-balance [balanceClosing]="balanceClosing"></app-detail-balance>
-                </nz-card>
+            <div class="col-md-6 col-12">
+                <app-detail-card-report 
+                [value]="balanceClosing?.balanceCash" 
+                icon="sliders" 
+                [title]="'closingDaylind.balance' | translate"
+                [description]="'closingDaylind.balanceDescription' | translate"
+                ></app-detail-card-report>
+            </div>
+            <div class="col-md-6 col-12">
+                <app-detail-card-report 
+                [value]="balanceClosing?.revenue" 
+                icon="rise" 
+                [title]="'closingDaylind.revenue' | translate"
+                [description]="'closingDaylind.revenueDescription' | translate"
+                ></app-detail-card-report>
+            </div>
+            <div class="col-md-4 col-12">
+                <app-detail-card-report 
+                [value]="salesClosing?.valueDay" 
+                icon="dollar-circle" 
+                [title]="'closingDaylind.sales' | translate"
+                [description]="'closingDaylind.salesDescription' | translate"
+                ></app-detail-card-report>
+            </div>
+            <div class="col-md-4 col-12">
+                <app-detail-card-report 
+                [value]="expensesClosing?.valueDay" 
+                icon="credit-card" 
+                [title]="'closingDaylind.expenses' | translate"
+                [description]="'closingDaylind.expensesDescription' | translate"
+                ></app-detail-card-report>
+            </div>
+            <div class="col-md-4 col-12">
+                <app-detail-card-report 
+                [value]="bailsClosing?.bailsDay" 
+                icon="dollar-circle" 
+                [title]="'closingDaylind.bails' | translate"
+                [description]="'closingDaylind.bailsDescription' | translate"
+                ></app-detail-card-report>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-3">
+            <div class="col-12 mb-3">
+                <h2>Información Detallada</h2>
+            </div>
             <div class="col-md-6 col-12">
                 <nz-card>
                     <app-detail-sales [salesClosing]="salesClosing"></app-detail-sales>

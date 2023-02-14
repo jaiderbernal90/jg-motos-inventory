@@ -24,6 +24,7 @@ import { TitleFilterComponent } from './components/title-filter/title-filter.com
 import { FilterDateComponent } from './components/filter-date/filter-date.component';
 import { ComponentsModule } from './components.module';
 import { ActionAuditPipe } from './pipes/action-audit.pipe';
+import { DetailCardReportComponent } from './components/detail-card-report/detail-card-report.component';
 
 const LIST_MODULES = [
     SearchPipe,
@@ -34,7 +35,8 @@ const LIST_MODULES = [
     StatusSalePipe,
     FilterDateComponent,
     TitleFilterComponent,
-    ActionAuditPipe
+    ActionAuditPipe,
+    DetailCardReportComponent
 ]
 
 @NgModule({
@@ -71,7 +73,8 @@ const LIST_MODULES = [
         ExportButtonComponent,
         FilterDateComponent,
         TitleFilterComponent,
-        ActionAuditPipe
+        ActionAuditPipe,
+        DetailCardReportComponent
     ],
     providers: [
         ThemeConstantService

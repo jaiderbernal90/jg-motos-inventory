@@ -246,9 +246,9 @@
     "closingDaylind":{
         "title":"Cierre diario",
         "sales":"Ventas",
-        "bails":"Abonos Ventas",
+        "bails":"Abonos",
         "bailsInvoicesClosing":"Abonos Facturas",
-        "balance":"Balance Caja",
+        "balance":"Balance",
         "numSales":"Número de ventas",
         "valueDay":"Monto recaudado",
         "payDay":"Monto pagado",
@@ -267,6 +267,11 @@
         "balanceNequi":"Valor Nequi",
         "balanceBancolombia":"Valor Bancolombia",
         "balanceDaviplata":"Valor Daviplata",
-        "revenue":"Ganancia"
+        "revenue":"Ganancia",
+        "revenueDescription":"Ganancia real de las ventas.",
+        "balanceDescription":"Balance total de ingresos y gastos. Dinero en caja. ",
+        "expensesDescription":"Suma total de gastos.",
+        "bailsDescription":"Suma total de abonos realizados a ventas.",
+        "salesDescription":"Suma total de ingresos por ventas."
     }
 }

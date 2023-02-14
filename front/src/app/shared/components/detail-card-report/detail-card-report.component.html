@@ -1,0 +1,14 @@
+<nz-card>
+    <div class="content__header-card">
+        <div class="rounded__border">
+            <span nz-icon [nzType]="icon" nzTheme="outline"></span>
+        </div>
+        <div class="">
+            <h6>{{ title }}</h6>
+            <span class="text-muted">{{ description }}</span>
+        </div>
+    </div>
+    <div class="content__body-card">
+        <span class="text__principaly-card">${{ value | number }}</span>
+    </div>
+</nz-card>

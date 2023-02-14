@@ -27,7 +27,6 @@ import { FilterComponent } from './components/filter/filter.component';
 import { ModalSearchProductsComponent } from './components/modal-search-products/modal-search-products.component';
 import { ProductsModule } from '../../inventory/products/products.module';
 
-
 @NgModule({
   declarations: [
     SalesComponent,
