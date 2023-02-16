@@ -24,4 +24,9 @@ class BailOrder extends Model
     {
         return $this->belongsTo(Order::class, 'id_order');
     }
+
+    public function orderNotPaid()
+    {
+        return $this->belongsTo(Order::class, 'id_order')->where('payment_status', 2);
+    }
 }

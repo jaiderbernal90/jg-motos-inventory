@@ -32,6 +32,7 @@ import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG, CurrencyMaskModule } from 'ng
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -78,6 +79,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     CurrencyMaskModule,
     NzSpaceModule,
     NzEmptyModule,
+    CollapseModule,
   ],
   providers: [
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }

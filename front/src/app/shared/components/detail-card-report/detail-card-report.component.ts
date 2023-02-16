@@ -11,6 +11,12 @@ export class DetailCardReportComponent implements OnInit {
   @Input() description:string;
   @Input() icon:string;
   @Input() value:string;
+  @Input() listPrices:string[] | any;
+  @Input() hasDetail:boolean;
+  @Input() prefix:string;
+  @Input() type:string;
+
+  isCollapsed = false;
 
   constructor() { }
 

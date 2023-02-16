@@ -24,5 +24,10 @@ class Bail extends Model
     {
         return $this->belongsTo(Sale::class, 'id_sale');
     }
+
+    public function saleNotPaid()
+    {
+        return $this->belongsTo(Sale::class, 'id_sale')->where('status', 2);
+    }
     
 }
