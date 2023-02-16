@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+    public $date;
+    public $type;
+
     /**
      * Display a listing of the resource.
      *
@@ -22,97 +25,170 @@ class ReportController extends Controller
      */
     public function closingDayling(Request $request)
     {
-        $date = $request->date;
-        $type = $request->type;
+        $this->date = $request->date;
+        $this->type = $request->type;
 
-        $data['sales']['numSales'] = $this->getSale($type, $date)->count();
-        $data['sales']['valueDay'] = $this->getSale($type, $date)->where(['status'=> 1, 'total_bails' => null])->sum('total');
-        $data['sales']['cash'] = $this->getSale($type, $date)->where(['id_payment_method' => 1, 'status'=> 1, 'total_bails' => null])->sum('total');
-        $data['sales']['bancolombia'] = $this->getSale($type, $date)->where(['id_payment_method' => 4, 'status'=> 1, 'total_bails' => null])->sum('total');
-        $data['sales']['nequi'] = $this->getSale($type, $date)->where(['id_payment_method' => 2, 'status'=> 1, 'total_bails' => null])->sum('total');
-        $data['sales']['daviplata'] = $this->getSale($type, $date)->where(['id_payment_method' => 3, 'status'=> 1, 'total_bails' => null])->sum('total');
-        
-
-        $data['bails']['numBails'] = $this->getBail($type, $date)->count();
-        $data['bails']['bailsDay'] = $this->getBail($type, $date)->sum('price');
-        $data['bails']['cash'] = $this->getBail($type, $date)->where('id_payment_method', 1)->sum('price');
-        $data['bails']['bancolombia'] = $this->getBail($type, $date)->where('id_payment_method', 4)->sum('price');
-        $data['bails']['nequi'] = $this->getBail($type, $date)->where('id_payment_method', 2)->sum('price');
-        $data['bails']['daviplata'] = $this->getBail($type, $date)->where('id_payment_method', 3)->sum('price');
-
-        $data['invoices']['numInvoices'] = $this->getInvoice($type, $date)->count();
-        $data['invoices']['payDay'] = $this->getInvoice($type, $date)->where(['payment_status'=> 1, 'total_bails' => null])->sum('total');
-        $data['invoices']['cash'] = $this->getInvoice($type, $date)->where(['id_payment_method' => 1, 'payment_status'=> 1, 'total_bails' => null])->sum('total');
-        $data['invoices']['bancolombia'] = $this->getInvoice($type, $date)->where(['id_payment_method' => 4, 'payment_status'=> 1, 'total_bails' => null])->sum('total');
-        $data['invoices']['nequi'] = $this->getInvoice($type, $date)->where(['id_payment_method' => 2, 'payment_status'=> 1, 'total_bails' => null])->sum('total');
-        $data['invoices']['daviplata'] = $this->getInvoice($type, $date)->where(['id_payment_method' => 3, 'payment_status'=> 1, 'total_bails' => null])->sum('total');
-
-        $data['bailsInvoices']['numBails'] = $this->getBailInvoice($type, $date)->count();
-        $data['bailsInvoices']['bailsDay'] = $this->getBailInvoice($type, $date)->sum('price');
-        $data['bailsInvoices']['cash'] = $this->getBailInvoice($type, $date)->where('id_payment_method', 1)->sum('price');
-        $data['bailsInvoices']['bancolombia'] = $this->getBailInvoice($type, $date)->where('id_payment_method', 4)->sum('price');
-        $data['bailsInvoices']['nequi'] = $this->getBailInvoice($type, $date)->where('id_payment_method', 2)->sum('price');
-        $data['bailsInvoices']['daviplata'] = $this->getBailInvoice($type, $date)->where('id_payment_method', 3)->sum('price');
-
-        $data['expenses']['numExpenses'] = $this->getExpense($type, $date)->count();
-        $data['expenses']['valueDay'] = $this->getExpense($type, $date)->sum('value');
-
-        
-        $data['balance']['balanceCash'] = $data['sales']['cash'] + $data['bails']['cash'] - $data['invoices']['cash'] - $data['bailsInvoices']['cash'] - $data['expenses']['valueDay'];
-        $data['balance']['balanceNequi'] = $data['sales']['nequi'] + $data['bails']['nequi'] - $data['invoices']['nequi'] - $data['bailsInvoices']['nequi'];
-        $data['balance']['balanceBancolombia'] = $data['sales']['bancolombia'] + $data['bails']['bancolombia'] - $data['invoices']['bancolombia'] - $data['bailsInvoices']['bancolombia'];
-        $data['balance']['balanceDaviplata'] = $data['sales']['daviplata'] + $data['bails']['daviplata'] - $data['invoices']['daviplata'] - $data['bailsInvoices']['daviplata'];
-        $revenue = $this->getSale($type, $date)
-        ->leftjoin('sales_detail', 'sales.id', '=', 'sales_detail.sale_id')
-        ->leftjoin('products', 'sales_detail.product_id', '=', 'products.id')
-        ->where('sales.status', 1)
-        ->sum(DB::raw('sales_detail.amount * sales_detail.price - sales_detail.amount * products.cost'));
-        $data['balance']['revenue'] = $revenue;
+        $data['sales'] = $this->getReportSales();
+        $data['bails'] = $this->getReportBails();
+        $data['invoices'] = $this->getReportInvoices();
+        $data['bailsInvoices'] = $this->getReportBailsInvoices();
+        $data['expenses'] = $this->getReportExpense();
+        $data['balance'] = $this->getReportBalance($data);
 
         return ResponseHelper::Get($data);
     }
 
-    private function getSale(String $type, $date){
-        if($type == 'month' ){
+    public function getReportSales()
+    {
+        $sales = [];
+        $sales['num'] = $this->getSale($this->type, $this->date)->count();
+        $sales['valueDay'] = $this->getSale($this->type, $this->date)->where(['status' => 1])->sum('total');
+        $sales['cash'] = $this->getSale($this->type, $this->date)->where(['id_payment_method' => 1, 'status' => 1, 'total_bails' => null])->sum('total');
+        $sales['bancolombia'] = $this->getSale($this->type, $this->date)->where(['id_payment_method' => 4, 'status' => 1, 'total_bails' => null])->sum('total');
+        $sales['nequi'] = $this->getSale($this->type, $this->date)->where(['id_payment_method' => 2, 'status' => 1, 'total_bails' => null])->sum('total');
+        $sales['daviplata'] = $this->getSale($this->type, $this->date)->where(['id_payment_method' => 3, 'status' => 1, 'total_bails' => null])->sum('total');
+
+        return $sales;
+    }
+
+    public function getReportBails()
+    {
+        $bails = [];
+        $bails['num'] = $this->getBail($this->type, $this->date)->count();
+        $bails['valueDayAll'] = $this->getBail($this->type, $this->date)->sum('price');
+        $bails['cashAll'] = $this->getBail($this->type, $this->date)->where('id_payment_method', 1)->sum('price');
+        $bails['bancolombiaAll'] = $this->getBail($this->type, $this->date)->where('id_payment_method', 4)->sum('price');
+        $bails['nequiAll'] = $this->getBail($this->type, $this->date)->where('id_payment_method', 2)->sum('price');
+        $bails['daviplataAll'] = $this->getBail($this->type, $this->date)->where('id_payment_method', 3)->sum('price');
+
+        $bails['valueDay'] = $this->getBail($this->type, $this->date)->whereHas('saleNotPaid')->sum('price');
+        $bails['cash'] = $this->getBail($this->type, $this->date)->whereHas('saleNotPaid')->where('id_payment_method', 1)->sum('price');
+        $bails['bancolombia'] = $this->getBail($this->type, $this->date)->whereHas('saleNotPaid')->where('id_payment_method', 4)->sum('price');
+        $bails['nequi'] = $this->getBail($this->type, $this->date)->whereHas('saleNotPaid')->where('id_payment_method', 2)->sum('price');
+        $bails['daviplata'] = $this->getBail($this->type, $this->date)->whereHas('saleNotPaid')->where('id_payment_method', 3)->sum('price');
+
+        return $bails;
+    }
+
+    public function getReportInvoices()
+    {
+        $invoices = [];
+        $invoices['num'] = $this->getInvoice($this->type, $this->date)->count();
+        $invoices['valueDay'] = $this->getInvoice($this->type, $this->date)->where(['payment_status' => 1])->sum('total');
+        $invoices['cash'] = $this->getInvoice($this->type, $this->date)->where(['id_payment_method' => 1, 'payment_status' => 1])->sum('total');
+        $invoices['bancolombia'] = $this->getInvoice($this->type, $this->date)->where(['id_payment_method' => 4, 'payment_status' => 1])->sum('total');
+        $invoices['nequi'] = $this->getInvoice($this->type, $this->date)->where(['id_payment_method' => 2, 'payment_status' => 1])->sum('total');
+        $invoices['daviplata'] = $this->getInvoice($this->type, $this->date)->where(['id_payment_method' => 3, 'payment_status' => 1])->sum('total');
+
+        return $invoices;
+    }
+
+    public function getReportBailsInvoices()
+    {
+        $bailsInvoices = [];
+        $bailsInvoices['num'] = $this->getBailInvoice($this->type, $this->date)->count();
+        $bailsInvoices['valueDay'] = $this->getBailInvoice($this->type, $this->date)->sum('price');
+        $bailsInvoices['cash'] = $this->getBailInvoice($this->type, $this->date)->where('id_payment_method', 1)->sum('price');
+        $bailsInvoices['bancolombia'] = $this->getBailInvoice($this->type, $this->date)->where('id_payment_method', 4)->sum('price');
+        $bailsInvoices['nequi'] = $this->getBailInvoice($this->type, $this->date)->where('id_payment_method', 2)->sum('price');
+        $bailsInvoices['daviplata'] = $this->getBailInvoice($this->type, $this->date)->where('id_payment_method', 3)->sum('price');
+
+        $bailsInvoices['valueDayAll'] = $this->getBailInvoice($this->type, $this->date)->whereHas('orderNotPaid')->sum('price');
+        $bailsInvoices['cashAll'] = $this->getBailInvoice($this->type, $this->date)->whereHas('orderNotPaid')->where('id_payment_method', 1)->sum('price');
+        $bailsInvoices['bancolombiaAll'] = $this->getBailInvoice($this->type, $this->date)->whereHas('orderNotPaid')->where('id_payment_method', 4)->sum('price');
+        $bailsInvoices['nequiAll'] = $this->getBailInvoice($this->type, $this->date)->whereHas('orderNotPaid')->where('id_payment_method', 2)->sum('price');
+        $bailsInvoices['daviplataAll'] = $this->getBailInvoice($this->type, $this->date)->whereHas('orderNotPaid')->where('id_payment_method', 3)->sum('price');
+
+        return $bailsInvoices;
+    }
+
+    public function getReportExpense()
+    {
+        $expenses = [];
+        $expenses['num'] = $this->getExpense($this->type, $this->date)->count();
+        $expenses['valueDay'] = $this->getExpense($this->type, $this->date)->sum('value');
+
+        return $expenses;
+    }
+
+    public function getReportBalance($data)
+    {
+        $sales = $data['sales'];
+        $bails = $data['bails'];
+        $invoices = $data['invoices'];
+        $bailsInvoices = $data['bailsInvoices'];
+        $expenses = $data['expenses'];
+        $balance = [];
+
+        $balance['balanceCash'] = $sales['cash'] + $bails['cashAll'] - $invoices['cash'] - $bailsInvoices['cashAll'] - $expenses['valueDay'];
+        $balance['balanceNequi'] = $sales['nequi'] + $bails['nequiAll'] - $invoices['nequi'] - $bailsInvoices['nequiAll'];
+        $balance['balanceBancolombia'] = $sales['bancolombia'] + $bails['bancolombiaAll'] - $invoices['bancolombia'] - $bailsInvoices['bancolombiaAll'];
+        $balance['balanceDaviplata'] = $sales['daviplata'] + $bails['daviplataAll'] - $invoices['daviplata'] - $bailsInvoices['daviplataAll'];
+        $balance['general'] = $balance['balanceCash'] + $balance['balanceNequi'] + $balance['balanceBancolombia'] + $balance['balanceDaviplata'];
+
+        $revenue = $this->getRevenue();
+        $balance['revenue'] = $revenue;
+
+        return $balance;
+    }
+
+    public function getRevenue()
+    {
+        return $this->getSale($this->type, $this->date)
+            ->leftjoin('sales_detail', 'sales.id', '=', 'sales_detail.sale_id')
+            ->leftjoin('products', 'sales_detail.product_id', '=', 'products.id')
+            ->where('sales.status', 1)
+            ->sum(DB::raw('sales_detail.amount * sales_detail.price - sales_detail.amount * products.cost'));
+    }
+
+
+    private function getSale(String $type, $date)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getLastDayMonth($date);
             return Sale::whereMonth('sales.date', $rangeDates['month'])->whereYear('sales.date', $rangeDates['year']);
         }
         return Sale::whereDate('sales.date', $date);
     }
 
-    private function getBail(String $type, $date){
-        if($type == 'month'){
+    private function getBail(String $type, $date)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getLastDayMonth($date);
             return Bail::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
         }
         return Bail::whereDate('created_at', $date);
     }
 
-    private function getBailInvoice(String $type, $date){
-        if($type == 'month'){
+    private function getBailInvoice(String $type, $date)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getLastDayMonth($date);
             return BailOrder::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
         }
         return BailOrder::whereDate('created_at', $date);
     }
 
-    private function getInvoice(String $type, $date){
-        if($type == 'month'){
+    private function getInvoice(String $type, $date)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getLastDayMonth($date);
             return Order::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
         }
         return Order::whereDate('created_at', $date);
     }
 
-    private function getExpense(String $type, $date){
-        if($type == 'month'){
+    private function getExpense(String $type, $date)
+    {
+        if ($type == 'month') {
             $rangeDates = $this->getLastDayMonth($date);
             return Expense::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
         }
         return Expense::whereDate('created_at', $date);
     }
 
-    private function getLastDayMonth($date) {
+    private function getLastDayMonth($date)
+    {
         $parseDate = Carbon::parse($date);
         $arr['month'] = $parseDate->format('m');
         $arr['year'] = $parseDate->format('Y');

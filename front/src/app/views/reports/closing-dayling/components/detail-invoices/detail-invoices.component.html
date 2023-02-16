@@ -7,12 +7,12 @@
             <div class="col-6">
                 <i nz-icon nzType="bar-chart" class="opacity-10"></i>
                 <span class="mr-3 ml-1"> <b>{{ 'closingDaylind.numInvoices' | translate }}:</b> </span>
-                <span>{{ invoicesClosing?.numInvoices }}</span>
+                <span>{{ invoicesClosing?.num }}</span>
             </div>
             <div class="col-6">
                 <i nz-icon nzType="dollar-circle" class="opacity-10"></i>
                 <span class="mr-3 ml-1"> <b>{{ 'closingDaylind.payDay' | translate }}:</b> </span>
-                <span>${{ invoicesClosing?.payDay | number }}</span>
+                <span>${{ invoicesClosing?.valueDay | number }}</span>
             </div>
         </div>
         <div class="row mb-5">

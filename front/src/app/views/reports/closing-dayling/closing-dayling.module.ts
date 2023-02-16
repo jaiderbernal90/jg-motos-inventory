@@ -15,7 +15,6 @@ import { DetailBalanceComponent } from './components/detail-balance/detail-balan
 import { DetailInvoicesComponent } from './components/detail-invoices/detail-invoices.component';
 import { DetailBailsInvoiceComponent } from './components/detail-bails-invoice/detail-bails-invoice.component';
 
-
 @NgModule({
   declarations: [
     ClosingDaylingComponent,
