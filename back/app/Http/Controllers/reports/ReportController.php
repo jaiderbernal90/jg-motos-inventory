@@ -229,6 +229,7 @@ class ReportController extends Controller
         $data['bailsInvoices'] = $this->getReportBailsInvoices();
         $data['expenses'] = $this->getReportExpense();
         $data['balance'] = $this->getReportBalance($data);
+        $data['buys'] = $this->getValueProducts();
         $data['local'] = Local::where('code', 01)->first();
         $data['date'] = $typeFilter;
         $data['type'] = $this->type;

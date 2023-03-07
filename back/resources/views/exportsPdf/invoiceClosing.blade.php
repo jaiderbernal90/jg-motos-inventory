@@ -100,6 +100,11 @@
                         <td>{{ @$data['bailsInvoices']['num'] }}</td>
                         <td>${{ number_format(@$data['bailsInvoices']['valueDay']) }}</td>
                     </tr>
+                    <tr class="detail">
+                        <td>Compras</td>
+                        <td>1</td>
+                        <td>${{ number_format(@$data['buys']) }}</td>
+                    </tr>
                     <tr>
                         <td></td>
                         <td><b>Ganancia:</b></td>
