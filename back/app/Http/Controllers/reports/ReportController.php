@@ -138,7 +138,10 @@ class ReportController extends Controller
 
     private function getValueProducts()
     {
-        return $this->getProduct($this->type, $this->date)->sum(DB::raw('cost * stock'));
+        $buys['value'] = $this->getProduct($this->type, $this->date)->sum(DB::raw('cost * stock'));
+        $buys['num'] = $this->getProduct($this->type, $this->date)->count();
+
+        return $buys;
     }
 
     public function getRevenue()

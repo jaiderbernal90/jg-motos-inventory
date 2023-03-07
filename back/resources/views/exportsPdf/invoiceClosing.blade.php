@@ -102,8 +102,8 @@
                     </tr>
                     <tr class="detail">
                         <td>Compras</td>
-                        <td>1</td>
-                        <td>${{ number_format(@$data['buys']) }}</td>
+                        <td>{{ @$data['buys']['num'] }}</td>
+                        <td>${{ number_format(@$data['buys']['value']) }}</td>
                     </tr>
                     <tr>
                         <td></td>
