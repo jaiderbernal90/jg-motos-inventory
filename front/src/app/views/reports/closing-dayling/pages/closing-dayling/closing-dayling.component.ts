@@ -62,7 +62,7 @@ export class ClosingDaylingComponent implements OnInit {
   }
 
   public downloadReport(): void {
-    this._fileSvc.exportFilePOST(`/reports/exportClosing`, { date: this.date, type: this.type } ,'Reporte cierre');
+    this._fileSvc.exportFilePOST(`/reports/exportClosing`, { date: this._dateSvc.getDate(this.date, this.type) , type: this.type } ,'Reporte cierre');
   }
 
 }
