@@ -10,6 +10,7 @@ use App\Models\accounting\BailOrder;
 use App\Models\accounting\Expense;
 use App\Models\accounting\Order;
 use App\Models\accounting\Sale;
+use App\Models\inventory\Product;
 use App\Models\Local;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -36,6 +37,7 @@ class ReportController extends Controller
         $data['bailsInvoices'] = $this->getReportBailsInvoices();
         $data['expenses'] = $this->getReportExpense();
         $data['balance'] = $this->getReportBalance($data);
+        $data['buys'] = $this->getValueProducts();
 
         return ResponseHelper::Get($data);
     }
@@ -134,6 +136,11 @@ class ReportController extends Controller
         return $balance;
     }
 
+    private function getValueProducts()
+    {
+        return $this->getProduct($this->type, $this->date)->sum(DB::raw('cost * stock'));
+    }
+
     public function getRevenue()
     {
         return $this->getSale($this->type, $this->date)
@@ -186,6 +193,15 @@ class ReportController extends Controller
             return Expense::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
         }
         return Expense::whereDate('created_at', $date);
+    }
+
+    private function getProduct(String $type, $date)
+    {
+        if ($type == 'month') {
+            $rangeDates = $this->getLastDayMonth($date);
+            return Product::whereMonth('created_at', $rangeDates['month'])->whereYear('created_at', $rangeDates['year']);
+        }
+        return Product::whereDate('created_at', $date);
     }
 
     private function getLastDayMonth($date)
