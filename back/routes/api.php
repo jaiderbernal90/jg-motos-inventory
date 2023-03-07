@@ -219,6 +219,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::controller(ReportController::class)->prefix('reports')->group(function (){
         Route::post('closingDayling', 'closingDayling');
+        Route::post('exportClosing', 'exportClosing');
     });
 
     Route::controller(OrderController::class)->prefix('orders')->group(function (){

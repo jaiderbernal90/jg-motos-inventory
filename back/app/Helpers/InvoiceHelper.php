@@ -66,4 +66,14 @@ class InvoiceHelper
         
         return $pdf->download("Factura #$order->reference.pdf");
     }
+
+    public static function downloadClosing($data)
+    {
+        $pdf = PDF::loadView('exportsPdf.invoiceClosing', [
+            'data' => $data
+        ]);
+        $pdf->setPaper('b7', 'portrait');
+        
+        return $pdf->download("Reporte cierre.pdf");
+    }
 }

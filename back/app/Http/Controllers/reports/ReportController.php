@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\reports;
 
+use App\Helpers\InvoiceHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Models\accounting\Bail;
@@ -9,6 +10,7 @@ use App\Models\accounting\BailOrder;
 use App\Models\accounting\Expense;
 use App\Models\accounting\Order;
 use App\Models\accounting\Sale;
+use App\Models\Local;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -141,7 +143,6 @@ class ReportController extends Controller
             ->sum(DB::raw('sales_detail.amount * sales_detail.price - sales_detail.amount * products.cost'));
     }
 
-
     private function getSale(String $type, $date)
     {
         if ($type == 'month') {
@@ -193,5 +194,29 @@ class ReportController extends Controller
         $arr['month'] = $parseDate->format('m');
         $arr['year'] = $parseDate->format('Y');
         return $arr;
+    }
+
+    public function exportClosing(Request $request)
+    {
+        $this->date = $request->date;
+        $this->type = $request->type;
+
+        if ($this->type == 'month'){
+            $typeFilter = ucfirst(Carbon::parse($this->date)->monthName);
+        }else{
+            $typeFilter = $request->date;
+        }
+
+        $data['sales'] = $this->getReportSales();
+        $data['bails'] = $this->getReportBails();
+        $data['invoices'] = $this->getReportInvoices();
+        $data['bailsInvoices'] = $this->getReportBailsInvoices();
+        $data['expenses'] = $this->getReportExpense();
+        $data['balance'] = $this->getReportBalance($data);
+        $data['local'] = Local::where('code', 01)->first();
+        $data['date'] = $typeFilter;
+        $data['type'] = $this->type;
+
+        return InvoiceHelper::downloadClosing($data);
     }
 }
