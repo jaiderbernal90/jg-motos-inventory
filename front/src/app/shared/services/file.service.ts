@@ -56,4 +56,21 @@ export class FilesService {
         }
     )
   }
+
+  exportFilePOST(path:string,body:any | Array<any>,filename:string) {
+    const token: string = sessionStorage.getItem('api_key');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    this.http.post(`${this.serverUrl}${path}`, body, {headers, responseType: 'blob' as 'json'}).subscribe(
+        (response: any) =>{
+            const dataType = response.type;
+            const binaryData = [];
+            binaryData.push(response);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+            downloadLink.setAttribute('download', filename);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+    )
+  }
 }

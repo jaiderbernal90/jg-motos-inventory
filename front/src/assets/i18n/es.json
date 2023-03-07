@@ -275,6 +275,8 @@
         "bailsDescription":"Suma total de abonos realizados a ventas.",
         "salesDescription":"Suma total de ingresos por ventas.",
         "invoicesDescription":"Suma total de facturas pagadas.",
-        "bailsInvoicesDescription":"Suma total de abonos realizados a facturas."
+        "bailsInvoicesDescription":"Suma total de abonos realizados a facturas.",
+        "shoppings":"Compras",
+        "shoppingsDescription":"Suma total de compras realizados."
     }
 }
