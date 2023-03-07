@@ -50,7 +50,7 @@ export class ClosingDaylingComponent implements OnInit {
       this.balanceClosing = data?.balance;
       this.invoicesClosing = data?.invoices;
       this.bailsInvoicesClosing = data?.bailsInvoices;
-      this.shoppingsClosing = data?.shoppings;
+      this.shoppingsClosing = data?.buys;
     })
   }
 
