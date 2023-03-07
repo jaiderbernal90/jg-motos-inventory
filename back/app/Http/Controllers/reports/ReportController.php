@@ -204,7 +204,7 @@ class ReportController extends Controller
         if ($this->type == 'month'){
             $typeFilter = ucfirst(Carbon::parse($this->date)->monthName);
         }else{
-            $typeFilter = $request->date;
+            $typeFilter = Carbon::parse($this->date)->format('Y-m-d');
         }
 
         $data['sales'] = $this->getReportSales();
