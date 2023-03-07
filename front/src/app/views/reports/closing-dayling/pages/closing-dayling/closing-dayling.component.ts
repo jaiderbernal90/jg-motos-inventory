@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 import { DateServicesService } from '../../../../../shared/services/date-services.service';
 import { BalanceModel } from '../../../../../shared/interfaces/balance';
 import { InvoiceModel } from '../../../../../shared/interfaces/invoice';
+import { FilesService } from '../../../../../shared/services/file.service';
 
 @Component({
   selector: 'app-closing-dayling',
@@ -22,11 +23,13 @@ export class ClosingDaylingComponent implements OnInit {
   expensesClosing:ExpenseModel | any;
   invoicesClosing:InvoiceModel | any;
   bailsInvoicesClosing:InvoiceModel | any;
+  shoppingsClosing:any;
   isSpinning:boolean;
 
   constructor(
     private _crudSvc:CrudServices,
-    private _dateSvc:DateServicesService 
+    private _dateSvc:DateServicesService,
+    private _fileSvc: FilesService
   ) { }
 
   ngOnInit(): void {
@@ -40,21 +43,26 @@ export class ClosingDaylingComponent implements OnInit {
     .pipe(finalize(() => this.isSpinning = false))
     .subscribe((res: any) => {
       const { data } = res;
-      console.log(data);
-      
+
       this.salesClosing = data?.sales;
       this.bailsClosing = data?.bails;
       this.expensesClosing = data?.expenses;
       this.balanceClosing = data?.balance;
       this.invoicesClosing = data?.invoices;
       this.bailsInvoicesClosing = data?.bailsInvoices;
+      this.shoppingsClosing = data?.shoppings;
     })
   }
 
   public changeDate(event:any): void { 
     const { date, type } = event;
     this.type = type;
+    this.date = date;
     this.closingDayling(this._dateSvc.getDate(date, type)); 
+  }
+
+  public downloadReport(): void {
+    this._fileSvc.exportFilePOST(`/reports/exportClosing`, { date: this.date, type: this.type } ,'Factura de venta');
   }
 
 }
