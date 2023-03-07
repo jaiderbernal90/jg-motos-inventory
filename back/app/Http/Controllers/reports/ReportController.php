@@ -201,6 +201,12 @@ class ReportController extends Controller
         $this->date = $request->date;
         $this->type = $request->type;
 
+        if ($this->type == 'month'){
+            $typeFilter = ucfirst(Carbon::parse($this->date)->monthName);
+        }else{
+            $typeFilter = $request->date;
+        }
+
         $data['sales'] = $this->getReportSales();
         $data['bails'] = $this->getReportBails();
         $data['invoices'] = $this->getReportInvoices();
@@ -208,7 +214,8 @@ class ReportController extends Controller
         $data['expenses'] = $this->getReportExpense();
         $data['balance'] = $this->getReportBalance($data);
         $data['local'] = Local::where('code', 01)->first();
-        $data['date'] = $request->date;
+        $data['date'] = $typeFilter;
+        $data['type'] = $this->type;
 
         return InvoiceHelper::downloadClosing($data);
     }

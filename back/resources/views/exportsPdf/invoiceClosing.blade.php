@@ -62,7 +62,13 @@
                 <br>{{ @$data['local']['city'] }}, {{ @$data['local']['department'] }} {{ @$data['local']['direction'] }}
             </p>
             <p class="center">
-                <b>Resumen cierre</b>
+                <b>Resumen cierre 
+                    @if (@$data['type'] == 'month')
+                        mes:
+                    @else
+                        día:
+                    @endif
+                </b>
                 <br>{{ @$data['date'] }}
             </p>
             <table class="table">
