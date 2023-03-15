@@ -49,8 +49,6 @@ class ProductController extends Controller{
         ->where(function ($query) use ($term) {
             $query->where('products.name', 'like', "%$term%");
             $query->orWhere('products.reference', 'like', "%$term%");
-            $query->orWhere('products.price', 'like', "%$term%");
-            $query->orWhere('brands.name', 'like', "%$term%");
         })
         ->with(['categories' => function ($query) { 
             $query->select('categories.id as category_id','categories.name as name_category','sub_categories.name as name_subcategory','sub_categories.id as sub_category_id');

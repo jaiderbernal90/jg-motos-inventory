@@ -7,13 +7,15 @@ import { StatusModel } from '../../../../../shared/interfaces/status';
 import { StatusService } from '../../services/status.service';
 import { ValidationsForm } from '../../validations/validations-form';
 import { ProductModel } from '../../../../../shared/interfaces/product';
+import { OnExit } from 'src/app/shared/guards/form-exit.guard';
+import { NotificationsService } from 'src/app/shared/services/notifications.service';
 
 @Component({
   selector: 'app-form-sales',
   templateUrl: './form-sales.component.html',
   styleUrls: ['./form-sales.component.scss']
 })
-export class FormSalesComponent implements OnInit, AfterViewChecked {
+export class FormSalesComponent implements OnInit, OnExit, AfterViewChecked {
 
   @Input() id:number;
   
@@ -26,7 +28,8 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
     private fb: UntypedFormBuilder,
     private _crudSvc:CrudServices,
     private router:Router,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private notification: NotificationsService
   ) { }
   
   ngAfterViewChecked(): void {
@@ -110,6 +113,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
   get products():UntypedFormArray{
     return this.form.controls["products"] as UntypedFormArray;
   }
+
   //------------------------------------------------------------------------
   //------------------------AUXILIAR FUNCTIONS------------------------------
   //------------------------------------------------------------------------
@@ -152,4 +156,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
     });         
   }
 
+  async onExit(){
+    return true;
+  }
 }
