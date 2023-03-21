@@ -63,8 +63,6 @@ export class FormBailsComponent implements OnInit {
   //------------------------------------------------------------------------
   public getOrder(){
     this._crudSvc.getRequest(`/orders/show/${this.id}`).subscribe((res: any) => {
-      console.log(res);
-      
       const { data} = res;
       this.form.patchValue(data);
     })

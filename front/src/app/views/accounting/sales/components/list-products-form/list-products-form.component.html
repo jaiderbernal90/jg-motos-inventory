@@ -14,7 +14,7 @@
             </thead>
             <tbody>
                 <ng-container formArrayName="products" >
-                    <tr *ngFor="let productsForm of products.controls; let indexProduct = index">
+                    <tr *ngFor="let productsForm of products?.controls; let indexProduct = index">
                         <ng-container [formGroup]="productsForm">
                                 <td>#{{ productsForm?.get('reference')?.value }}</td>
                                 <td>{{  productsForm?.get('name')?.value }}</td>

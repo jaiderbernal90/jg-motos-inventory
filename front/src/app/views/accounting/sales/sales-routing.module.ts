@@ -15,49 +15,56 @@ const routes: Routes = [
   {
     path: 'crear',
     component: AddSalesComponent,
-    data: {
-      title: 'Crear',
-      headerDisplay: "none"
-    },
-    children:[
+    children: [
       {
         path: '',
-        component: AddSalesComponent,
-        canDeactivate: [FormExitGuard]
+        component: FormSalesComponent,
+        canDeactivate: [FormExitGuard],
       },
-    ]
+    ],
+    data: {
+      title: 'Crear',
+      headerDisplay: 'none',
+    },
   },
   {
     path: 'editar/:id',
     component: AddSalesComponent,
+    children: [
+      {
+        path: '',
+        component: FormSalesComponent,
+        canDeactivate: [FormExitGuard],
+      },
+    ],
     data: {
       title: 'Editar',
-      headerDisplay: "none"
-    }
+      headerDisplay: 'none',
+    },
   },
   {
     path: 'abonos/:id',
     data: {
-      title: 'Abonos'
+      title: 'Abonos',
     },
-    children:[
+    children: [
       {
-        path:'',
+        path: '',
         component: ViewBailsComponent,
       },
       {
         path: 'crear',
         component: AddBailsComponent,
         data: {
-          title: 'Crear'
-        }
-      }
-    ]
-  }
+          title: 'Crear',
+        },
+      },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class SalesRoutingModule { }
+export class SalesRoutingModule {}
