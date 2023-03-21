@@ -77,8 +77,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
     this._crudSvc.postRequest(`/orders/index`, body).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
         const { data } = res;
-        console.log(data);
-        
         this.invoicesList = data.data;
         this.totalItems = data.total;
       })

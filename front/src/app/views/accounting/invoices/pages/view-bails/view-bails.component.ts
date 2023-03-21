@@ -72,7 +72,6 @@ export class ViewBailsComponent implements OnInit {
 
     this._crudSvc.postRequest(`/bails_order/index`, body).pipe(finalize( () => this.loading = false)).subscribe((res: any) => {
         const { data, dataTwo } = res;
-        console.log(res);
         
         this.totalBails = dataTwo;
         this.total =  data.data[0]?.order.total;

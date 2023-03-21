@@ -2,20 +2,23 @@ import { Component, Input, OnInit, AfterViewChecked, ChangeDetectorRef } from '@
 import { finalize } from 'rxjs/operators';
 import { Validators, FormBuilder, UntypedFormGroup, UntypedFormArray, AbstractControl, UntypedFormBuilder } from '@angular/forms';
 import { CrudServices } from '../../../../../shared/services/crud.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { StatusModel } from '../../../../../shared/interfaces/status';
 import { StatusService } from '../../services/status.service';
 import { ValidationsForm } from '../../validations/validations-form';
 import { ProductModel } from '../../../../../shared/interfaces/product';
+import { OnExit } from 'src/app/shared/guards/form-exit.guard';
+import { NotificationsService } from 'src/app/shared/services/notifications.service';
+import { ModalService } from '../../../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-form-sales',
   templateUrl: './form-sales.component.html',
   styleUrls: ['./form-sales.component.scss']
 })
-export class FormSalesComponent implements OnInit, AfterViewChecked {
+export class FormSalesComponent implements OnInit, OnExit, AfterViewChecked {
 
-  @Input() id:number;
+  id:number;
   
   date:Date = new Date();
   form: UntypedFormGroup;
@@ -26,8 +29,14 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
     private fb: UntypedFormBuilder,
     private _crudSvc:CrudServices,
     private router:Router,
-    private readonly changeDetectorRef: ChangeDetectorRef
-  ) { }
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
+    private _modalSvc: ModalService
+  ) {
+    this.activatedRoute.params.subscribe((params) => {
+        this.id = params.id ?? '';
+      });
+   }
   
   ngAfterViewChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -51,7 +60,8 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
       tax: [ 0, [ Validators.required, Validators.max(100), Validators.min(0)] ],
       subtotal:[0, [  ]],
       bail:[null, [  ]],
-      products: this.fb.array([])
+      products: this.fb.array([]),
+      observations:[null],
     },
     {
       validator: ValidationsForm.matchValidation('bail', 'total', 'no-same')
@@ -110,6 +120,7 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
   get products():UntypedFormArray{
     return this.form.controls["products"] as UntypedFormArray;
   }
+
   //------------------------------------------------------------------------
   //------------------------AUXILIAR FUNCTIONS------------------------------
   //------------------------------------------------------------------------
@@ -152,4 +163,20 @@ export class FormSalesComponent implements OnInit, AfterViewChecked {
     });         
   }
 
+  // ------------------------------------------------------
+  // ------------------------ MODAL ----------------------- 
+  // ------------------------------------------------------
+
+  async onExit(){
+    if(this.form.touched && (this.form.dirty || this.products.length)){
+      try {
+        let res = await this._modalSvc.confirm(`Tienes cambios sin guardar`,`<p>Si abandonas esta página perderas tus cambios.<br> <strong>¿Estas
+        seguro que quieres abandonar la página?<strong></p>`);
+        return res;
+      } catch (error) {
+          return false;
+      }
+    }
+    return true;
+  }
 }

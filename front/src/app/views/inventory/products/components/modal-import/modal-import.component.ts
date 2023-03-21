@@ -45,7 +45,6 @@ export class ModalImportComponent implements OnInit {
         this._crudSvc.requestEvent.emit('');
      })).subscribe( res => {
         const { data } = res;
-        console.log(data);
         
         this._productSvc.setProduct$(data?.productsNoSaved);
         this._productSvc.setRowImported$(data?.rowsSaved);

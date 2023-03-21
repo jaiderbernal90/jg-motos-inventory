@@ -26,6 +26,8 @@ import { ComponentsModule } from './components.module';
 import { ActionAuditPipe } from './pipes/action-audit.pipe';
 import { DetailCardReportComponent } from './components/detail-card-report/detail-card-report.component';
 import { DetailTypeSimpleReportComponent } from './components/detail-type-simple-report/detail-type-simple-report.component';
+import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
+import { ModalComponent } from './components/modal/modal.component';
 
 const LIST_MODULES = [
     SearchPipe,
@@ -37,7 +39,8 @@ const LIST_MODULES = [
     FilterDateComponent,
     TitleFilterComponent,
     ActionAuditPipe,
-    DetailCardReportComponent
+    DetailCardReportComponent,
+    ModalComponent
 ]
 
 @NgModule({
@@ -51,6 +54,7 @@ const LIST_MODULES = [
         GobalTableComponent,
         CategoriesNavComponent,
         ExportButtonComponent,
+        ConfirmButtonComponent,
         ...LIST_MODULES
     ],
     imports: [
@@ -76,7 +80,9 @@ const LIST_MODULES = [
         TitleFilterComponent,
         ActionAuditPipe,
         DetailCardReportComponent,
-        DetailTypeSimpleReportComponent
+        DetailTypeSimpleReportComponent,
+        ConfirmButtonComponent,
+        ModalComponent
     ],
     providers: [
         ThemeConstantService
